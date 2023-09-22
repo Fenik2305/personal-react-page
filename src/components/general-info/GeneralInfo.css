@@ -1,0 +1,13 @@
+.GeneralInfo {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.Description {
+    height: 550px;
+    width: 600px;
+    background-color: #f2f2f2;
+    text-align: left;
+    padding: 25px;
+}
