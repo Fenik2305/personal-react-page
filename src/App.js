@@ -1,17 +1,12 @@
 import './App.css';
-import HeaderStyles from './components/header/Header.css'
-import GeneralInfoStyles from './components/general-info/GeneralInfo.css'
-import FooterStyles from './components/footer/Footer.css'
-import Header from './components/header/Header';
-import GeneralInfo from './components/general-info/GeneralInfo';
-import Footer from './components/footer/Footer';
+import HomePage from './components/home-page/HomePage';
+import AboutMePage from './components/about-me-page/AboutMePage';
+import ContactsPage from './components/contacts-page/ContactsPage';
 
 function App() {
     return (
-      <div className="App">
-        <Header />
-        <GeneralInfo />
-        <Footer />
+      <div className='App'>
+        <AboutMePage />
       </div>
     );
   }
