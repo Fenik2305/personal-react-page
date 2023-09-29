@@ -1,5 +1,10 @@
 import './App.css';
 import React, { useState } from 'react';
+import { Routes, Route } from 'react-router-dom'
+import HomePage from './components/HomePage/HomePage';
+import AboutMePage from './components/AboutMePage/AboutMePage';
+import ContactsPage from './components/ContactsPage/ContactsPage';
+
 import GeneralInfo from './components/HomePage/GeneralInfo/GeneralInfo';
 import GeneralInfoStyles from './components/HomePage/GeneralInfo/GeneralInfo.css';
 import AboutMe from './components/AboutMePage/AboutMe/AboutMe';
@@ -11,28 +16,13 @@ import FooterStyles from './components/Footer/Footer.css';
 import Contacts from './components/ContactsPage/Contacts/Contacts';
 
 function App() {
-    const [page, setPage] = useState('contact');
-
-    let currentPage;
-    switch (page) {
-      case 'home':
-        currentPage = <GeneralInfo />;
-        break;
-      case 'about':
-        currentPage = <AboutMe />;
-        break;
-      case 'contact':
-        currentPage = <Contacts />;
-        break;
-      default:
-        currentPage = <GeneralInfo />;
-    }
-
     return (
       <div className='App'>
-        <Header setPage={setPage} />
-        {currentPage}
-        <Footer />
+        <Routes>
+          <Route path='/' element={<HomePage />}/>
+          <Route path='/about' element={<AboutMePage />}/>
+          <Route path='/contactus' element={<ContactsPage />}/>
+        </Routes>
       </div>
     );
   }

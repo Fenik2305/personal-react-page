@@ -18,3 +18,13 @@
     padding-left: 8px;
     cursor: pointer;
 }
+
+.HeaderNavigationElement:link {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+.HeaderNavigationElement:visited {
+    color: #fff;
+    text-decoration: none;
+  }
