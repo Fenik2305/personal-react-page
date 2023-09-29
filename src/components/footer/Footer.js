@@ -1,5 +1,5 @@
 import React from "react";
-import ConnectWithMe from "./connect-with-me/ConnectWithMe";
+import ConnectWithMe from "./ConnectWithMe/ConnectWithMe";
 import AboutMe from "./AboutMe";
 
 export default function Footer() {
