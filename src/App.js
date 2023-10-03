@@ -1,18 +1,29 @@
 import './App.css';
-import React from 'react';
+import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom'
-import HomePage from './components/HomePage/HomePage';
-import AboutMePage from './components/AboutMePage/AboutMePage';
-import ContactsPage from './components/ContactsPage/ContactsPage';
+import GeneralInfo from './components/HomePage/GeneralInfo';
+import GeneralInfoStyles from './components/HomePage/GeneralInfo.css';
+import AboutMe from './components/AboutMePage/AboutMe';
+import AboutMeStyles from './components/AboutMePage/AboutMe.css';
+import Contacts from './components/ContactsPage/Contacts';
+import ContactsStyles from './components/ContactsPage/Contacts.css';
+import Header from './components/Header/Header';
+import HeaderStyles from './components/Header/Header.css';
+import Footer from './components/Footer/Footer';
+import FooterStyles from './components/Footer/Footer.css';
 
 function App() {
+    const [messages, setMessages] = useState([]);
+
     return (
       <div className='App'>
+        <Header messagesNum={messages.length}/>
         <Routes>
-          <Route path='/' element={<HomePage />}/>
-          <Route path='/about' element={<AboutMePage />}/>
-          <Route path='/contactus' element={<ContactsPage />}/>
+          <Route path='/' element={<GeneralInfo />}/>
+          <Route path='/about' element={<AboutMe />}/>
+          <Route path='/contactus' element={<Contacts messages={messages} onNewMessage={setMessages} />}/>
         </Routes>
+        <Footer />
       </div>
     );
   }

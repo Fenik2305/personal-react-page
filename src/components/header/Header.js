@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom"
+import { Badge } from "@mui/material";
 
-export default function Header() {
+export default function Header({messagesNum}) {
     return (
         <header className="Header">
             <nav className="HeaderNavigationBlock">
@@ -9,7 +10,9 @@ export default function Header() {
                 <Link className="HeaderNavigationElement" to='/about'>ABOUT</Link>
                 <Link className="HeaderNavigationElement" to='/contactus'>CONTACTS</Link>
             </nav>
-            <img className="HeaderMailIcon" src="/icons/mail-icon.png" alt="mail-icon" height={40} width={40}></img>
+            <Badge badgeContent={messagesNum} color='error'>
+                <img className="HeaderMailIcon" src="/icons/mail-icon.png" alt="mail-icon" height={35} width={35}></img>
+            </Badge>
         </header>
     );
 }
