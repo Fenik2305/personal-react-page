@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { Stack, TextField, Button } from "@mui/material";
 import './Contacts.css'
 
-export default function Contacts() {
-    const [messages, setMessages] = useState([]);
-
+export default function Contacts({messages, onNewMessage}) {
     const sendMessageHandler = () => {
         const name = document.getElementById("name").value;
         const email = document.getElementById("email").value;
@@ -16,7 +14,7 @@ export default function Contacts() {
             message: message ? message : "N/A"
         };
 
-        setMessages([...messages, newMessage]);
+        onNewMessage([...messages, newMessage]);
 
         document.getElementById("name").value = "";
         document.getElementById("email").value = "";
