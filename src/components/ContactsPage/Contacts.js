@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Stack, TextField, Button } from "@mui/material";
 import './Contacts.css'
 
 export default function Contacts({messages, onNewMessage}) {
+    const [emailError, setEmailError] = useState(false);
+
     const emailValidation = (input) => {
         const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
         return regex.test(input);
@@ -13,10 +15,7 @@ export default function Contacts({messages, onNewMessage}) {
         const email = document.getElementById("email").value;
         const message = document.getElementById("message").value;
 
-        if (!emailValidation(email)) {
-            alert("Invalid email!");
-            return;
-        }
+    setEmailError(!emailValidation(email) ? true : false);
 
         const newMessage = {
             name: name ? name : "N/A",
@@ -41,9 +40,11 @@ export default function Contacts({messages, onNewMessage}) {
                         helperText='Please enter your name'
                         inputProps={{style: {fontSize: "26px"}}}/>
                     <TextField
+                        required
                         id='email'
-                        label='E-mail'
-                        helperText='Please enter your e-mail'
+                        label={"E-mail"}
+                        error={emailError}
+                        helperText={!emailError ? "Please enter your email" : "Only 'email@example.com' format"}
                         inputProps={{style: {fontSize: "26px"}}}/>
                 </Stack>
                     <TextField
