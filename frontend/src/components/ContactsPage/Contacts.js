@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Stack, TextField, Button } from "@mui/material";
+import { useMessagesContext } from "../../hooks/useMessagesContext.js"
 import './Contacts.css'
 
 export default function Contacts({messages, onNewMessage}) {
@@ -15,7 +16,7 @@ export default function Contacts({messages, onNewMessage}) {
         const email = document.getElementById("email").value;
         const message = document.getElementById("message").value;
 
-    setEmailError(!emailValidation(email) ? true : false);
+        setEmailError(!emailValidation(email) ? true : false);
 
         const newMessage = {
             name: name ? name : "N/A",
