@@ -1,6 +1,7 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom'
+import { useMessagesContext } from './hooks/useMessagesContext';
 import GeneralInfo from './components/HomePage/GeneralInfo';
 import GeneralInfoStyles from './components/HomePage/GeneralInfo.css';
 import AboutMe from './components/AboutMePage/AboutMe';
@@ -13,15 +14,13 @@ import Footer from './components/Footer/Footer';
 import FooterStyles from './components/Footer/Footer.css';
 
 function App() {
-    const [messages, setMessages] = useState([]);
-
     return (
       <div className='App'>
-        <Header messagesNum={messages.length}/>
+        <Header/> {/* messagesNum={messages.length}*/}
         <Routes>
           <Route path='/' element={<GeneralInfo />}/>
           <Route path='/about' element={<AboutMe />}/>
-          <Route path='/contactus' element={<Contacts messages={messages} onNewMessage={setMessages} />}/>
+          <Route path='/contactus' element={<Contacts />}/>
         </Routes>
         <Footer />
       </div>

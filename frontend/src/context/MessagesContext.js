@@ -10,7 +10,7 @@ export const messagesReducer = (state, action) => {
             }
         case "CREATE_MESSAGE":
             return {
-                messages: [action.payload, ...state.workout]
+                messages: [action.payload, ...state.messages]
             }
         default:
             return state

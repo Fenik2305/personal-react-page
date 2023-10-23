@@ -3,7 +3,8 @@ import { Stack, TextField, Button } from "@mui/material";
 import { useMessagesContext } from "../../hooks/useMessagesContext.js"
 import './Contacts.css'
 
-export default function Contacts({messages, onNewMessage}) {
+export default function Contacts() {
+    const { dispatch } = useMessagesContext();
     const [emailError, setEmailError] = useState(false);
 
     const emailValidation = (input) => {
@@ -11,24 +12,36 @@ export default function Contacts({messages, onNewMessage}) {
         return regex.test(input);
     };
 
-    const sendMessageHandler = () => {
+    const sendMessageHandler = async () => {
         const name = document.getElementById("name").value;
         const email = document.getElementById("email").value;
-        const message = document.getElementById("message").value;
+        const mssg = document.getElementById("mssg ").value;
 
         setEmailError(!emailValidation(email) ? true : false);
 
-        const newMessage = {
+        const message = {
             name: name ? name : "N/A",
             email: email ? email : "N/A",
-            message: message ? message : "N/A"
+            mssg : mssg  ? mssg  : "N/A"
         };
 
-        onNewMessage([...messages, newMessage]);
+        const response = await fetch('/api/messages', {
+            method: "POST",
+            body: JSON.stringify(message),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
 
-        document.getElementById("name").value = "";
-        document.getElementById("email").value = "";
-        document.getElementById("message").value = "";
+        const json = await response.json()
+
+
+        if (response.ok) {
+            document.getElementById("name").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("mssg ").value = "";
+            dispatch({type: 'CREATE_MESSAGE', payload: json})
+        }
     };
 
     return (
@@ -49,7 +62,7 @@ export default function Contacts({messages, onNewMessage}) {
                         inputProps={{style: {fontSize: "26px"}}}/>
                 </Stack>
                     <TextField
-                        id='message'
+                        id='mssg '
                         variant="filled"
                         label='Please write your message'
                         inputProps={{style: {fontSize: "26px"}}}/>
