@@ -1,7 +1,6 @@
 import './App.css';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Routes, Route } from 'react-router-dom'
-import { useMessagesContext } from './hooks/useMessagesContext';
 import GeneralInfo from './components/HomePage/GeneralInfo';
 import GeneralInfoStyles from './components/HomePage/GeneralInfo.css';
 import AboutMe from './components/AboutMePage/AboutMe';
@@ -16,7 +15,7 @@ import FooterStyles from './components/Footer/Footer.css';
 function App() {
     return (
       <div className='App'>
-        <Header/> {/* messagesNum={messages.length}*/}
+        <Header/>
         <Routes>
           <Route path='/' element={<GeneralInfo />}/>
           <Route path='/about' element={<AboutMe />}/>
