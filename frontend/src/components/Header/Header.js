@@ -1,9 +1,13 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom"
-import { Badge } from "@mui/material";
+import { Badge, Button, ButtonBase } from "@mui/material";
+import { useLogout } from "../../hooks/useLogout";
 import { useMessagesContext } from "../../hooks/useMessagesContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 export default function Header() {
+    const { user } = useAuthContext()
+    const { logout } = useLogout()
     const { messages, dispatch } = useMessagesContext()
 
     useEffect(() => {
@@ -19,7 +23,9 @@ export default function Header() {
       fetchMessages()
     }, [dispatch])
 
-    console.log(messages)
+    const handleLogout = () => {
+      logout()
+    }
 
     return (
         <header className="Header">
@@ -28,9 +34,31 @@ export default function Header() {
                 <Link className="HeaderNavigationElement" to='/about'>ABOUT</Link>
                 <Link className="HeaderNavigationElement" to='/contactus'>CONTACTS</Link>
             </nav>
-            <Badge badgeContent={messages ? messages.length : 0} color='error'>
-                <img className="HeaderMailIcon" src="/icons/mail-icon.png" alt="mail-icon" height={35} width={35}></img>
-            </Badge>
+
+            <div className="UserActions">
+              {!user && (<nav className="UserActionsBlock">
+                <Link className="UserActionsElement" to='/login'>LOGIN</Link>
+                <Link className="UserActionsElement" to='/signup'>SIGNUP</Link>
+              </nav>)}
+
+              {user && <div>{user.email}</div>}
+
+              {user && (
+                <Button
+                    className="UserActionsElement"
+                    variant="outline"
+                    size='large'
+                    style={{maxWidth: '170px'}}
+                    onClick={handleLogout}>
+                    Log out
+                </Button>)}
+              
+              {user && (<Badge badgeContent={messages ? messages.length : 0} color='error'>
+                  <Link to='/messages'>
+                    <img className="UserActionsElement" src="/icons/mail-icon.png" alt="mail-icon" height={35} width={35}></img>
+                  </Link>
+              </Badge>)}
+            </div>
         </header>
     );
 }

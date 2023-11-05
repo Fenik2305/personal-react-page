@@ -2,8 +2,8 @@ require("dotenv").config()
 
 const db = require("./db");
 const express = require("express");
-const mongoose = require("mongoose");
 const messageRoutes = require("./routes/messages.js");
+const userRoutes = require("./routes/user.js");
 
 // express app
 const app = express();
@@ -21,8 +21,7 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/api/messages', messageRoutes)
-
-
+app.use('/api/user', userRoutes)
 
 app.on("ready", () => {
     app.listen(process.env.PORT, () => {
