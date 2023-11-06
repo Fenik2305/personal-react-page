@@ -1,5 +1,5 @@
 {
-  "proxy": "http://personal-react-page_backend:4000",
+  "proxy": "http://personal-react-page_backend_1:4000",
   "name": "personal-page",
   "version": "0.1.0",
   "private": true,
