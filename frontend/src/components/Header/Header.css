@@ -1,5 +1,5 @@
 .Header {
-    height: 30px;
+    height: 40px;
     padding: 0.5em 5%;
     background-color: #3468c9;
     color: #fff;
@@ -25,6 +25,34 @@
   }
   
 .HeaderNavigationElement:visited {
+    color: #fff;
+    text-decoration: none;
+  }
+
+.UserActions {
+    display: flex; 
+    align-items: center;
+    flex-direction: row;
+}
+
+.UserActionsBlock {
+    padding-right: 24px;
+    width: 100px;
+    display: flex; 
+    flex-direction: row;
+}
+
+.UserActionsElement {
+    padding-left: 8px;
+    cursor: pointer;
+}
+
+.UserActionsElement:link {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+.UserActionsElement:visited {
     color: #fff;
     text-decoration: none;
   }

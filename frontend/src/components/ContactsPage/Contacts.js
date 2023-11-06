@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Stack, TextField, Button } from "@mui/material";
 import { useMessagesContext } from "../../hooks/useMessagesContext.js"
+import { useAuthContext } from "../../hooks/useAuthContext.js"; 
 import './Contacts.css'
 
 export default function Contacts() {
+    const { user } = useAuthContext();
     const { dispatch } = useMessagesContext();
     const [emailError, setEmailError] = useState(false);
 
