@@ -53,7 +53,7 @@ export default function Header() {
                     Log out
                 </Button>)}
               
-              {user && (<Badge badgeContent={messages.length > 0 ? messages.length : 0} color='error'>
+              {user && (<Badge badgeContent={messages ? (messages.length > 0 ? messages.length : 0) : 0} color='error'>
                   <Link to='/messages'>
                     <img className="UserActionsElement" src="/icons/mail-icon.png" alt="mail-icon" height={35} width={35}></img>
                   </Link>
