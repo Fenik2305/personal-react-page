@@ -1,9 +1,13 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom"
+
 import { Badge, Button } from "@mui/material";
+
 import { useLogout } from "../../hooks/useLogout";
 import { useMessagesContext } from "../../hooks/useMessagesContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
+
+import UserIcon from './UserIcon'
 
 export default function Header() {
     const { user } = useAuthContext()
@@ -36,12 +40,20 @@ export default function Header() {
             </nav>
 
             <div className="UserActions">
-              {!user && (<nav className="UserActionsBlock">
+              {user && <div>{user.email}</div>}
+
+              {user && (<Badge badgeContent={messages ? (messages.length > 0 ? messages.length : 0) : 0} color='error'>
+                  <Link to='/messages'>
+                    <img className="UserActionsElement" src="/icons/mail-icon.png" alt="mail-icon" height={35} width={35}></img>
+                  </Link>
+              </Badge>)}
+              
+              <UserIcon />
+
+              {/*{!user && (<nav className="UserActionsBlock">
                 <Link className="UserActionsElement" to='/login'>LOGIN</Link>
                 <Link className="UserActionsElement" to='/signup'>SIGNUP</Link>
               </nav>)}
-
-              {user && <div>{user.email}</div>}
 
               {user && (
                 <Button
@@ -52,12 +64,7 @@ export default function Header() {
                     onClick={handleLogout}>
                     Log out
                 </Button>)}
-              
-              {user && (<Badge badgeContent={messages ? (messages.length > 0 ? messages.length : 0) : 0} color='error'>
-                  <Link to='/messages'>
-                    <img className="UserActionsElement" src="/icons/mail-icon.png" alt="mail-icon" height={35} width={35}></img>
-                  </Link>
-              </Badge>)}
+              */}
             </div>
         </header>
     );

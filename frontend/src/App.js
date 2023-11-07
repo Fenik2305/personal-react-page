@@ -18,6 +18,9 @@ import HeaderStyles from './components/Header/Header.css';
 import Footer from './components/Footer/Footer';
 import FooterStyles from './components/Footer/Footer.css';
 
+import AuthPage from './components/AuthPage/AuthPage.js';
+import AutPageStyles from './components/AuthPage/AuthPage.css'
+
 function App() {
     return (
       <div className='App'>
@@ -26,9 +29,10 @@ function App() {
           <Route path='/' element={<GeneralInfo />}/>
           <Route path='/about' element={<AboutMe />}/>
           <Route path='/contactus' element={<Contacts />}/>
-          <Route path='/signup' element={<Signup />}/>
-          <Route path='/login' element={<Login />}/>
+          {/*<Route path='/signup' element={<Signup />}/>
+          <Route path='/login' element={<Login />}/>*/}
           <Route path='/messages' element={<MessagesList />}/>
+          <Route path='/authpage' element={<AuthPage />} />
         </Routes>
         <Footer />
       </div>
