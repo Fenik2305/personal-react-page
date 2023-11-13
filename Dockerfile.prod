@@ -8,8 +8,8 @@ COPY /frontend/package-lock.json /app
 ADD /frontend/src /app/src
 ADD /frontend/public /app/public
 
-RUN npm install
-RUN npm run build
+RUN yarn install
+RUN yarn build
 
 COPY /backend/.env.prod /app/.env
 COPY /backend/server.js /app
@@ -22,7 +22,7 @@ ADD /backend/routes /app/routes
 
 RUN rm -rf node_modules/
 
-RUN npm install
+RUN yarn install
 
 EXPOSE 80
 
