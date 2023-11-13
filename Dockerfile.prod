@@ -1,0 +1,29 @@
+FROM node:lts-buster-slim AS prod
+
+RUN mkdir /app
+WORKDIR /app
+
+COPY /frontend/package.json /app
+COPY /frontend/package-lock.json /app
+ADD /frontend/src /app/src
+ADD /frontend/public /app/public
+
+RUN npm install
+RUN npm run build
+
+COPY /backend/.env.prod /app/.env
+COPY /backend/server.js /app
+COPY /backend/package.json /app
+COPY /backend/package-lock.json /app
+ADD /backend/controllers /app/controllers
+ADD /backend/db /app/db
+ADD /backend/models /app/models
+ADD /backend/routes /app/routes
+
+RUN rm -rf node_modules/
+
+RUN npm install
+
+EXPOSE 80
+
+ENTRYPOINT ["node", "server.js"]
