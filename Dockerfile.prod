@@ -8,7 +8,7 @@ COPY /frontend/package-lock.json /app
 ADD /frontend/src /app/src
 ADD /frontend/public /app/public
 
-RUN yarn install
+RUN yarn install --network-concurrency 1
 RUN yarn build
 
 COPY /backend/.env.prod /app/.env
@@ -22,7 +22,7 @@ ADD /backend/routes /app/routes
 
 RUN rm -rf node_modules/
 
-RUN yarn install
+RUN yarn install --network-concurrency 1
 
 EXPOSE 80
 
