@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+  backend:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: personalpage
+    links:
+      - mongo
+    ports:
+      - "80:80"
+    volumes:
+      - ./mongo_dump:/app/mongo_dump
+    depends_on:
+      - mongo
+    networks:
+      - express-mongo
+    expose:
+      - 80
+
+  mongo:
+    image: mongo
+    container_name: mongodb
+    volumes:
+      - ./mongo_data:/data/db
+    networks:
+      -  express-mongo
+networks:
+  express-mongo:
+    external: true
