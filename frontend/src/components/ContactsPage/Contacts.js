@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { Stack, TextField, Button } from "@mui/material";
 import { useMessagesContext } from "../../hooks/useMessagesContext.js"
-import { useAuthContext } from "../../hooks/useAuthContext.js"; 
 import './Contacts.css'
 
 export default function Contacts() {
-    const { user } = useAuthContext();
     const { dispatch } = useMessagesContext();
     const [emailError, setEmailError] = useState(false);
 
@@ -54,20 +52,20 @@ export default function Contacts() {
                         id='name'
                         label='Name'
                         helperText='Please enter your name'
-                        inputProps={{style: {fontSize: "26px"}}}/>
+                        inputProps={{style: {fontSize: "24px"}}}/>
                     <TextField
                         required
                         id='email'
                         label={"E-mail"}
                         error={emailError}
                         helperText={!emailError ? "Please enter your email" : "Only 'email@example.com' format"}
-                        inputProps={{style: {fontSize: "26px"}}}/>
+                        inputProps={{style: {fontSize: "24px"}}}/>
                 </Stack>
                     <TextField
                         id='mssg '
                         variant="filled"
                         label='Please write your message'
-                        inputProps={{style: {fontSize: "26px"}}}/>
+                        inputProps={{style: {fontSize: "24px"}}}/>
                     <Button 
                         variant="contained"
                         size='large'
