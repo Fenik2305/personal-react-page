@@ -24,7 +24,7 @@ import AutPageStyles from './components/AuthPage/AuthPage.css'
 function App() {
     return (
       <div className='App'>
-        <Header/>
+        <Header />
         <Routes>
           <Route path='/' element={<GeneralInfo />}/>
           <Route path='/about' element={<AboutMe />}/>

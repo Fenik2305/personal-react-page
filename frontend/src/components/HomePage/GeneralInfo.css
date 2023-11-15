@@ -4,6 +4,7 @@
         margin-top: 20px;
         margin-left: calc((100vw - 1200px) / 2);
         margin-right: calc((100vw - 1200px) / 2);
+        margin-bottom: 120px;
         display: flex;
     }
 
@@ -20,28 +21,33 @@
     }
 }
 
-
 @media (max-width: 1200px){
     .GeneralInfo {
-        height: 300px;
         margin-top: 20px;
-        margin-left: calc((100vw - 600px) / 2);
-        margin-right: calc((100vw - 600px) / 2);
+        margin-bottom: 120px;
+
+        min-width: 600px;
+
         display: flex;
+        flex-direction: column;
     }
 
     .Description {
-        font-size: 10px;
+        font-size: 24px;
         background-color: #f2f2f2;
-        text-align: left;
         padding: 25px;
-        width: 100%;
+        text-align: left;
+        
+        min-height: 250px;
+        min-width: 250px;
     }
     
-    .picture {
-        height: 300px;
-        width: 300px;
+    .Picture {
+        min-height: 600px;
+        min-width: 600px;
+
+        width: 99vw;
+        height: 99vw;
+        object-fit: cover;
     }
 }
-
-
