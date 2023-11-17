@@ -1,9 +1,10 @@
-@media (min-width: 1200px){
+@media (min-width: 1200px){   
     .GeneralInfo {
         height: 600px;
+        width: 1200px;
         margin-top: 20px;
-        margin-left: calc((100vw - 1200px) / 2);
-        margin-right: calc((100vw - 1200px) / 2);
+        margin-left: auto;
+        margin-right: auto;
         margin-bottom: 120px;
         display: flex;
     }
@@ -13,11 +14,12 @@
         background-color: #f2f2f2;
         text-align: left;
         padding: 25px;
-        width: 100%;
+        width: 700px;
     }
-    
-    .picture {
+
+    .Picture {
         height: 600px;
+        width: 600px;
     }
 }
 
@@ -45,9 +47,30 @@
     .Picture {
         min-height: 600px;
         min-width: 600px;
+    }
+}
 
-        width: 99vw;
-        height: 99vw;
-        object-fit: cover;
+@media (width: 1200px){   
+    .GeneralInfo {
+        height: 600px;
+        width: 1200px;
+        margin-top: 20px;
+        margin-bottom: 120px;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .Description {
+        font-size: 24px;
+        background-color: #f2f2f2;
+        text-align: left;
+        padding: 25px;
+        height: 550px;
+        width: 550px;
+    }
+
+    .Picture {
+        height: 600px;
+        width: 600px;
     }
 }

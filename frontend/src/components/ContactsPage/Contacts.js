@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Stack, TextField, Button } from "@mui/material";
 import { useMessagesContext } from "../../hooks/useMessagesContext.js"
+import { useAuthContext } from "../../hooks/useAuthContext.js"
 import './Contacts.css'
 
 export default function Contacts() {
     const { dispatch } = useMessagesContext();
+    const { user } = useAuthContext();
     const [emailError, setEmailError] = useState(false);
 
     const emailValidation = (input) => {
@@ -22,7 +24,8 @@ export default function Contacts() {
         const message = {
             name: name ? name : "N/A",
             email: email ? email : "N/A",
-            mssg : mssg  ? mssg  : "N/A"
+            mssg : mssg  ? mssg  : "N/A",
+            author : user ? user.email : "unregistred",
         };
 
         const response = await fetch('/api/messages', {
