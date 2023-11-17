@@ -25,7 +25,7 @@ export default function Contacts() {
             name: name ? name : "N/A",
             email: email ? email : "N/A",
             mssg : mssg  ? mssg  : "N/A",
-            author : user ? user.email : "unregistred",
+            author : user ? user._id : "unregistred",
         };
 
         const response = await fetch('/api/messages', {

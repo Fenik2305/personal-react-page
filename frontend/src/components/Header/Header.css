@@ -1,7 +1,7 @@
 .Header {
     height: 40px;
     min-width: calc(600px - 20%);
-    padding: 0.5em 5%;
+    padding: 0.5em 10%;
 
     background-color: #3468c9;
     color: #fff;

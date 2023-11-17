@@ -17,8 +17,13 @@ const userSchema = new Schema({
     name: {
         type: String,
         required: false,
-        default: "Anonym"
+        default: "noname"
     },
+    lastVisitAt: {
+        type: Date,
+        required: true,
+        default: Date.now()
+    }
 });
 
 // static signup method
