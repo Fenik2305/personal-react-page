@@ -4,8 +4,8 @@ export default function ContactIcon(props) {
     return (
         <a href={props.url} className="ContactIcon">
             <img src={props.img}
-                width="30"
-                height="30"
+                width="25"
+                height="25"
             ></img>
         </a>
     );

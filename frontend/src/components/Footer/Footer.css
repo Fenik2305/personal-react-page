@@ -21,15 +21,18 @@
 .AboutMeReferences:link {
     color: #7a7a7a;
     text-decoration: none;
-  }
+}
   
 .AboutMeReferences:visited {
     color: #7a7a7a;
     text-decoration: none;
-  }
+}
 
 .ConnectWithMe {
     letter-spacing: 1px;
     flex-direction: column;
 }
 
+.ContactIcon {
+    margin: 4px 10px 0px 0px;
+}
