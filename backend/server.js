@@ -14,6 +14,8 @@ const app = express();
 // middleware
 app.use(express.json());
 
+//aboba
+
 app.use((req, res, next) => {
     console.log(req.method, req.path)
     next()
