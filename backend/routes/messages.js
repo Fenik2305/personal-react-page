@@ -1,4 +1,6 @@
 const express = require('express')
+const AuthController = require('../controllers/authController.js');
+
 const {
     getMessages,
     getMessage,
@@ -10,18 +12,18 @@ const {
 const router = express.Router()
 
 // GET all messages
-router.get('/', getMessages);
+router.get('/', AuthController.roleAuthorization(["user", "admin"]), getMessages);
 
 // GET a single message
-router.get('/:id', getMessage);
+router.get('/:id', AuthController.roleAuthorization(["user", "admin"]), getMessage);
 
 // POST a new message
 router.post('/', createMessage);
 
 // DELETE a message
-router.delete('/:id', deleteMessage);
+router.delete('/:id', AuthController.roleAuthorization(["admin"]), deleteMessage);
 
 // DELETE all messages
-router.delete('/', deleteMessages);
+router.delete('/', AuthController.roleAuthorization(["admin"]), deleteMessages);
 
 module.exports = router

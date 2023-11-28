@@ -11,7 +11,6 @@ import UserIcon from './UserIcon'
 
 export default function Header() {
     const { user } = useAuthContext()
-    const { logout } = useLogout()
     const { messages, dispatch } = useMessagesContext()
 
     useEffect(() => {
@@ -26,10 +25,6 @@ export default function Header() {
 
       fetchMessages()
     }, [dispatch])
-
-    const handleLogout = () => {
-      logout()
-    }
 
     return (
         <header className="Header">
@@ -49,22 +44,6 @@ export default function Header() {
               </Badge>)}
               
               <UserIcon />
-
-              {/*{!user && (<nav className="UserActionsBlock">
-                <Link className="UserActionsElement" to='/login'>LOGIN</Link>
-                <Link className="UserActionsElement" to='/signup'>SIGNUP</Link>
-              </nav>)}
-
-              {user && (
-                <Button
-                    className="UserActionsElement"
-                    variant="outline"
-                    size='large'
-                    style={{maxWidth: '170px'}}
-                    onClick={handleLogout}>
-                    Log out
-                </Button>)}
-              */}
             </div>
         </header>
     );

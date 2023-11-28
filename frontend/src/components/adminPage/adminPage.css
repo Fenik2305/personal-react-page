@@ -1,5 +1,5 @@
 .users-table {
-    width: 1200px;
+    max-width: 1200px;
     height: auto;
 
     margin: 20px auto 120px auto;

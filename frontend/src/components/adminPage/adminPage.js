@@ -13,27 +13,89 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
-function createData(name, calories, fat, carbs, protein, price) {
+const data = {
+  "users": [
+    {
+      "name": "Alex",
+      "email": "email@dot.com",
+      "lastVisit": "01-01-2023",
+      "role": "user",
+      "messages": [
+        {
+          "date": "2020-01-05",
+          "name": "alex",
+          "mssg": "first alex's message"
+        },
+        {
+          "date": "2020-01-08",
+          "name": "alex",
+          "mssg": "second alex's message"
+        }
+      ]
+    },
+    {
+      "name": "Ice",
+      "email": "email@dot.com",
+      "lastVisit": "01-02-2023",
+      "role": "admin",
+      "messages": [
+        {
+          "date": "2020-01-01",
+          "name": "ice",
+          "mssg": "first ice's message"
+        },
+        {
+          "date": "2020-01-01",
+          "name": "ice",
+          "mssg": "second ice's message"
+        },
+        {
+          "date": "2020-01-03",
+          "name": "ice",
+          "mssg": "third ices's message"
+        }
+      ]
+    },
+    {
+      "name": "anon",
+      "email": "N/A",
+      "lastVisit": "N/A",
+      "role": "user",
+      "messages": [
+      ]
+    },
+    {
+      "name": "unregistred",
+      "email": "N/A",
+      "lastVisit": "N/A",
+      "role": "user",
+      "messages": [
+        {
+          "date": "2020-01-01",
+          "name": "a",
+          "mssg": "text"
+        },
+        {
+          "date": "2020-01-01",
+          "name": "b",
+          "mssg": "text text"
+        }
+      ]
+    }
+  ]
+}
+
+function createData(name, email, lastVisit, countMessages, role, edit, messages) {
   return {
     name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [
-      {
-        date: '2020-01-05',
-        customerId: '11091700',
-        amount: 3,
-      },
-      {
-        date: '2020-01-02',
-        customerId: 'Anonymous',
-        amount: 1,
-      },
-    ],
+    email,
+    lastVisit,
+    countMessages,
+    role,
+    edit,
+    messages
   };
 }
 
@@ -48,46 +110,44 @@ function Row(props) {
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => setOpen(!open)}
-          >
+            onClick={() => setOpen(!open)}>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
           {row.name}
         </TableCell>
-        <TableCell align="right">{row.calories}</TableCell>
-        <TableCell align="right">{row.fat}</TableCell>
-        <TableCell align="right">{row.carbs}</TableCell>
-        <TableCell align="right">{row.protein}</TableCell>
+        <TableCell align="right">{row.email}</TableCell>
+        <TableCell align="right">{row.lastVisit}</TableCell>
+        <TableCell align="right">{row.countMessages}</TableCell>
+        <TableCell align="right">{row.role}</TableCell>
+        <TableCell align="right">{row.edit}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                History
+                Messages
               </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
                     <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right">Total price ($)</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Message</TableCell>
+                    <TableCell align="right">Edit</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
+                  {row.messages.map((message) => (
+                    <TableRow key={message.date}>
                       <TableCell component="th" scope="row">
-                        {historyRow.date}
+                        {message.date}
                       </TableCell>
-                      <TableCell>{historyRow.customerId}</TableCell>
-                      <TableCell align="right">{historyRow.amount}</TableCell>
-                      <TableCell align="right">
-                        {Math.round(historyRow.amount * row.price * 100) / 100}
-                      </TableCell>
+                      <TableCell>{message.name}</TableCell>
+                      <TableCell>{message.mssg}</TableCell>
+                      <TableCell align='right'>{<DeleteForeverIcon />}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -102,29 +162,27 @@ function Row(props) {
 
 Row.propTypes = {
   row: PropTypes.shape({
-    calories: PropTypes.number.isRequired,
-    carbs: PropTypes.number.isRequired,
-    fat: PropTypes.number.isRequired,
-    history: PropTypes.arrayOf(
+    name: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    lastVisit: PropTypes.string.isRequired,
+    countMessages: PropTypes.number.isRequired,
+    role: PropTypes.string.isRequired,
+    edit: PropTypes.object.isRequired,
+    messages: PropTypes.arrayOf(
       PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
         date: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        mssg: PropTypes.string.isRequired
       }),
     ).isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    protein: PropTypes.number.isRequired,
   }).isRequired,
 };
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
-  createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
-  createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
-  createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
-];
+console.log(data)
+
+const rows = data["users"].map(user => (
+  createData(user["name"], user["email"], user["lastVisit"], user["messages"].length, user["role"], <DeleteForeverIcon />, user["messages"])
+)) 
 
 export default function CollapsibleTable() {
   return (
@@ -134,11 +192,12 @@ export default function CollapsibleTable() {
                 <TableHead>
                 <TableRow>
                     <TableCell />
-                    <TableCell>Dessert (100g serving)</TableCell>
-                    <TableCell align="right">Calories</TableCell>
-                    <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                    <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                    <TableCell align="right">Protein&nbsp;(g)</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell align="right">E-mail</TableCell>
+                    <TableCell align="right">Last visit</TableCell>
+                    <TableCell align="right">Count messages</TableCell>
+                    <TableCell align="right">Role</TableCell>
+                    <TableCell align="right">Edit</TableCell>
                 </TableRow>
                 </TableHead>
                 <TableBody>
