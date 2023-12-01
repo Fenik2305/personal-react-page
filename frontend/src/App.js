@@ -31,9 +31,9 @@ function App() {
           <Route path='/' element={<GeneralInfo />}/>
           <Route path='/about' element={<AboutMe />}/>
           <Route path='/contactus' element={<Contacts />}/>
-          <Route path='/messages' element={<MessagesList />}/>
-          <Route path='/authpage' element={!user ? <AuthPage /> : <Navigate to="/" />} />
-          <Route path='/admin' element={<CollapsibleTable />} />
+          <Route path='/messages' element={user ? <MessagesList /> : <Navigate to="/" />} />
+          <Route path='/authpage' element={user ? <Navigate to="/" /> : <AuthPage />} />
+          <Route path='/admin' element={user ? <CollapsibleTable /> : <Navigate to="/" />} />
         </Routes>
         <Footer />
       </div>

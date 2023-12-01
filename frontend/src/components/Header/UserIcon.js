@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useLogout } from "../../hooks/useLogout";
 
@@ -12,6 +12,7 @@ export default function UserIcon( props ) {
     const { user } = useAuthContext()
     const { logout } = useLogout()
     const [anchorEl, setAnchorEl] = useState(null);
+    const navigate = useNavigate();
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -19,6 +20,11 @@ export default function UserIcon( props ) {
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
     };
 
     return ( 
@@ -48,7 +54,7 @@ export default function UserIcon( props ) {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}>
 
-                {user && (<MenuItem onClick={logout}>LogOut</MenuItem>)}
+                {user && (<MenuItem onClick={handleLogout}>LogOut</MenuItem>)}
 
                 {!user && (
                     <MenuItem onClick={handleClose}>
@@ -58,8 +64,3 @@ export default function UserIcon( props ) {
         </div>
     );
 }
-
-
-
-
-<Link className="UserActionsElement" to='/signup'>SIGNUP</Link>
