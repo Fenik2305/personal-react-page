@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
-
-const Role = require("../models/Role")
+const roles = require("./roles.js")
 
 const Schema = mongoose.Schema;
 
@@ -21,10 +20,11 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    roles: [{
+    role: {
         type: String,
-        ref: 'Role'
-    }],
+        required: true,
+        default: roles.ADMIN
+    },
     isDisabled: {
         type: Boolean,
         required: true,
@@ -59,9 +59,7 @@ userSchema.statics.signup = async function (name, email, password) {
     const salt = await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(password, salt)
 
-    const userRole = await Role.findOne({value: "admin"})
-
-    const user = await this.create({ name, email, password: hash, roles: [userRole.value]})
+    const user = await this.create({ name, email, password: hash })
 
     return user
 }

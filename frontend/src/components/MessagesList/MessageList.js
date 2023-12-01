@@ -4,7 +4,6 @@ import { useMessagesContext } from "../../hooks/useMessagesContext";
 
 const MessagesList = () => {
     const { messages } = useMessagesContext()
-    console.log(messages)
 
     return (
         <div>

@@ -1,10 +1,9 @@
 const User = require('../models/userModel.js');
-const Role = require('../models/Role.js');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose')
 
-const createToken = (_id, roles) => {
-    return jwt.sign({_id: _id, roles: roles}, process.env.SECRET, {expiresIn: "7d"})
+const createToken = (_id, role) => {
+    return jwt.sign({_id: _id, role: role}, process.env.SECRET, {expiresIn: "7d"})
 }
 
 //login user
@@ -14,10 +13,10 @@ const loginUser = async (req, res) => {
     try {
         const user = await User.login(email, password)
         const _id = user._id
-        const roles = user.roles
+        const role = user.role
 
         //create token
-        const token = createToken(_id, roles)
+        const token = createToken(_id, role)
  
         res.status(200).json({email, _id, token})
     } catch (error) {
@@ -32,10 +31,10 @@ const signupUser = async (req, res) => {
     try {
         const user = await User.signup(name, email, password)
         const _id = user._id
-        const roles = user.roles
+        const role = user.role
 
         //create token
-        const token = createToken(_id, roles)
+        const token = createToken(_id, role)
 
         res.status(200).json({email, _id, token})
     } catch (error) {

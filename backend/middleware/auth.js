@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const roles = require('../models/roles.js');
 
 module.exports = function(roles) {
     return function (req, res, next) {
@@ -14,14 +15,10 @@ module.exports = function(roles) {
                 return res.status(401).json({message: "User is not authorized"})
             }
     
-            const {roles: userRoles} = jwt.verify(token, process.env.SECRET)
+            const {role: userRole} = jwt.verify(token, process.env.SECRET)
 
-            let hasRole = false;
+            let hasRole = roles.includes(userRole) ? true : false;
 
-            userRoles.forEach(role => {
-                hasRole = roles.includes(role) ? true : false
-            });
-    
             //user's access level is not high enough
             if (!hasRole) {
                 return res.status(403).json({message: "You are not authorized to perform this action"})

@@ -20,10 +20,10 @@ router.post('/login', loginUser)
 router.post('/signup', signupUser)
 
 //update user
-router.patch('/:id', updateUser)
+router.patch('/:id', AuthController.roleAuthorization(['admin']), updateUser)
 
 //delete user
-router.delete('/:id', deleteUser)
+router.delete('/:id', AuthController.roleAuthorization(['admin']), deleteUser)
 
 
 module.exports = router

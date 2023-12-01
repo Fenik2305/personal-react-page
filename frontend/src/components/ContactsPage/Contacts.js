@@ -44,7 +44,9 @@ export default function Contacts() {
             document.getElementById("name").value = "";
             document.getElementById("email").value = "";
             document.getElementById("mssg ").value = "";
-            dispatch({type: 'CREATE_MESSAGE', payload: json})
+            if (user) {
+                dispatch({type: 'CREATE_MESSAGE', payload: json})
+            }
         }
     };
 
