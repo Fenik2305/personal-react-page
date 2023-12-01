@@ -8,6 +8,15 @@ const getMessages = async (req, res) => {
     res.status(200).json(messages)
 };
 
+// GET user messages
+const getUserMessages = async (req, res) => {
+    const { userID } = req.params
+
+    const messages = await Message.find({ author: userID }).sort({createdAt: -1})
+
+    res.status(200).json(messages)
+};
+
 // GET a message
 const getMessage = async (req, res) => {
     const { id } = req.params
@@ -62,6 +71,7 @@ const deleteMessages = async (req, res) => {
 
 module.exports = {
     getMessages,
+    getUserMessages,
     getMessage,
     createMessage,
     deleteMessage,

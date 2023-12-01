@@ -25,6 +25,11 @@ const userSchema = new Schema({
         type: String,
         ref: 'Role'
     }],
+    isDisabled: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     lastVisitAt: {
         type: Date,
         required: true,

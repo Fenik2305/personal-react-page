@@ -3,7 +3,6 @@ import { Link } from "react-router-dom"
 
 import { Badge, Button } from "@mui/material";
 
-import { useLogout } from "../../hooks/useLogout";
 import { useMessagesContext } from "../../hooks/useMessagesContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
@@ -15,7 +14,11 @@ export default function Header() {
 
     useEffect(() => {
       const fetchMessages = async () => {
-        const response = await fetch('/api/messages')
+        const response = await fetch('/api/messages', {
+          headers: {
+            'Authorization': `Bearer ${user.token}`
+          }
+        })
         const json = await response.json()
 
         if (response.ok) {
@@ -23,8 +26,10 @@ export default function Header() {
         }
       }
 
-      fetchMessages()
-    }, [dispatch])
+      if (user) {
+        fetchMessages()
+      }
+    }, [user, dispatch])
 
     return (
         <header className="Header">
