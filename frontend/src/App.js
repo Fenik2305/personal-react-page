@@ -1,6 +1,6 @@
 import './App.css';
 import React from 'react';
-import { Routes, Route, Navigate} from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 
 import GeneralInfo from './components/HomePage/GeneralInfo';
 import GeneralInfoStyles from './components/HomePage/GeneralInfo.css';
