@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 
-export default function UserIcon( props ) {
+export default function UserIcon() {
     const { user } = useAuthContext()
     const { logout } = useLogout()
     const [anchorEl, setAnchorEl] = useState(null);
@@ -23,8 +23,14 @@ export default function UserIcon( props ) {
     };
 
     const handleLogout = () => {
+        handleClose();
         logout();
         navigate('/');
+    };
+
+    const handleAdminMenu = () => {
+        handleClose();
+        navigate('/admin');
     };
 
     return ( 
@@ -53,6 +59,8 @@ export default function UserIcon( props ) {
                 }}
                 open={Boolean(anchorEl)}
                 onClose={handleClose}>
+
+                {user && user.role === "admin" && (<MenuItem onClick={handleAdminMenu}>AdminMenu</MenuItem>)}
 
                 {user && (<MenuItem onClick={handleLogout}>LogOut</MenuItem>)}
 
