@@ -15,83 +15,14 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
-const data = {
-  "users": [
-    {
-      "name": "Alex",
-      "email": "email@dot.com",
-      "lastVisit": "01-01-2023",
-      "role": "user",
-      "messages": [
-        {
-          "date": "2020-01-05",
-          "name": "alex",
-          "mssg": "first alex's message"
-        },
-        {
-          "date": "2020-01-08",
-          "name": "alex",
-          "mssg": "second alex's message"
-        }
-      ]
-    },
-    {
-      "name": "Ice",
-      "email": "email@dot.com",
-      "lastVisit": "01-02-2023",
-      "role": "admin",
-      "messages": [
-        {
-          "date": "2020-01-01",
-          "name": "ice",
-          "mssg": "first ice's message"
-        },
-        {
-          "date": "2020-01-01",
-          "name": "ice",
-          "mssg": "second ice's message"
-        },
-        {
-          "date": "2020-01-03",
-          "name": "ice",
-          "mssg": "third ices's message"
-        }
-      ]
-    },
-    {
-      "name": "anon",
-      "email": "N/A",
-      "lastVisit": "N/A",
-      "role": "user",
-      "messages": [
-      ]
-    },
-    {
-      "name": "unregistred",
-      "email": "N/A",
-      "lastVisit": "N/A",
-      "role": "user",
-      "messages": [
-        {
-          "date": "2020-01-01",
-          "name": "a",
-          "mssg": "text"
-        },
-        {
-          "date": "2020-01-01",
-          "name": "b",
-          "mssg": "text text"
-        }
-      ]
-    }
-  ]
-}
+import { useEffect } from 'react';
+import { useAuthContext } from '../../hooks/useAuthContext';
 
-function createData(name, email, lastVisit, countMessages, role, edit, messages) {
+function createData(name, email, lastVisitAt, countMessages, role, edit, messages) {
   return {
     name,
     email,
-    lastVisit,
+    lastVisitAt,
     countMessages,
     role,
     edit,
@@ -118,7 +49,7 @@ function Row(props) {
           {row.name}
         </TableCell>
         <TableCell align="right">{row.email}</TableCell>
-        <TableCell align="right">{row.lastVisit}</TableCell>
+        <TableCell align="right">{row.lastVisitAt}</TableCell>
         <TableCell align="right">{row.countMessages}</TableCell>
         <TableCell align="right">{row.role}</TableCell>
         <TableCell align="right">{row.edit}</TableCell>
@@ -141,9 +72,9 @@ function Row(props) {
                 </TableHead>
                 <TableBody>
                   {row.messages.map((message) => (
-                    <TableRow key={message.date}>
+                    <TableRow key={message._id}>
                       <TableCell component="th" scope="row">
-                        {message.date}
+                        {message.createdAt}
                       </TableCell>
                       <TableCell>{message.name}</TableCell>
                       <TableCell>{message.mssg}</TableCell>
@@ -164,13 +95,14 @@ Row.propTypes = {
   row: PropTypes.shape({
     name: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
-    lastVisit: PropTypes.string.isRequired,
+    lastVisitAt: PropTypes.string.isRequired,
     countMessages: PropTypes.number.isRequired,
     role: PropTypes.string.isRequired,
     edit: PropTypes.object.isRequired,
     messages: PropTypes.arrayOf(
       PropTypes.shape({
-        date: PropTypes.string.isRequired,
+        _id: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
         mssg: PropTypes.string.isRequired
       }),
@@ -178,13 +110,77 @@ Row.propTypes = {
   }).isRequired,
 };
 
-console.log(data)
-
-const rows = data["users"].map(user => (
-  createData(user["name"], user["email"], user["lastVisit"], user["messages"].length, user["role"], <DeleteForeverIcon />, user["messages"])
-)) 
-
 export default function CollapsibleTable() {
+  const { user } = useAuthContext();
+  const [rows, setRows] = React.useState([]);
+
+  const fetchMessages = async () => {
+    try {
+      const response = await fetch(`/api/messages/`, {
+        headers: {
+          'Authorization': `Bearer ${user.token}`
+        }
+      });
+
+      const messages = await response.json();
+
+      return messages;
+    } catch (error) {
+      console.log("Messages fetching error:", error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(`/api/user/`, {
+        headers: {
+          'Authorization': `Bearer ${user.token}`
+        }
+      });
+
+      const users = await response.json();
+
+      return users["users"];
+    } catch (error) {
+      console.log("Users fetching error:", error);
+    }
+  };
+
+  const convertDataToRows = async () => {
+    try {
+      const messages = await fetchMessages();
+      const users = await fetchUsers();
+
+      const newRows = [];
+
+      users.forEach(async (user) => {
+        const userMessages = messages.filter(function (message) {
+          return message.author === user._id;
+        });
+
+        newRows.push(
+          createData(
+            user["name"],
+            user["email"],
+            user["lastVisitAt"],
+            userMessages.length,
+            user["role"],
+            <DeleteForeverIcon />,
+            userMessages
+          )
+        );
+      });
+
+      setRows(newRows);
+    } catch (error) {
+      console.log("Data fetching error:", error);
+    }
+  };
+
+  useEffect(() => {
+    convertDataToRows();
+  }, [convertDataToRows]);
+
   return (
     <div className='users-table'>
         <TableContainer component={Paper}>
@@ -208,6 +204,5 @@ export default function CollapsibleTable() {
             </Table>
         </TableContainer>
     </div>
-    
   );
 }

@@ -13,10 +13,10 @@ const {
 const router = express.Router()
 
 // GET all messages
-router.get('/', AuthController.roleAuthorization(["user", "admin"]), getMessages);
+router.get('/', AuthController.roleAuthorization(["admin"]), getMessages);
 
 // GET all user's messages
-router.get('/:userID', getUserMessages)
+router.get('/:userID', AuthController.roleAuthorization(["user", "admin"]), getUserMessages)
 
 // GET a single message
 router.get('/:id', AuthController.roleAuthorization(["user", "admin"]), getMessage);

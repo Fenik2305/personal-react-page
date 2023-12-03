@@ -14,7 +14,7 @@ export default function Header() {
 
     useEffect(() => {
       const fetchMessages = async () => {
-        const response = await fetch('/api/messages', {
+        const response = await fetch(`/api/messages/${user._id}`, {
           headers: {
             'Authorization': `Bearer ${user.token}`
           }

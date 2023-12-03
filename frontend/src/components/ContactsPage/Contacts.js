@@ -57,12 +57,14 @@ export default function Contacts() {
                     <TextField
                         id='name'
                         label='Name'
+                        defaultValue={user ? user.name : ""}
                         helperText='Please enter your name'
                         inputProps={{style: {fontSize: "24px"}}}/>
                     <TextField
                         required
                         id='email'
                         label={"E-mail"}
+                        defaultValue={user ? user.email : ""}
                         error={emailError}
                         helperText={!emailError ? "Please enter your email" : "Only 'email@example.com' format"}
                         inputProps={{style: {fontSize: "24px"}}}/>
