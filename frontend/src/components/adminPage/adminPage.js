@@ -13,7 +13,9 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+
+import DeleteUserIcon from './deleteUserIcon.js';
+import DeleteMessageIcon from './deleteMessageIcon.js';
 
 import { useEffect } from 'react';
 import { useAuthContext } from '../../hooks/useAuthContext';
@@ -65,6 +67,7 @@ function Row(props) {
                 <TableHead>
                   <TableRow>
                     <TableCell>Date</TableCell>
+                    <TableCell>E-mail</TableCell>
                     <TableCell>Name</TableCell>
                     <TableCell>Message</TableCell>
                     <TableCell align="right">Edit</TableCell>
@@ -76,9 +79,10 @@ function Row(props) {
                       <TableCell component="th" scope="row">
                         {message.createdAt}
                       </TableCell>
+                      <TableCell>{message.email}</TableCell>
                       <TableCell>{message.name}</TableCell>
                       <TableCell>{message.mssg}</TableCell>
-                      <TableCell align='right'>{<DeleteForeverIcon />}</TableCell>
+                      <TableCell align='right'>{<DeleteMessageIcon _id={message._id} />}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -101,9 +105,9 @@ Row.propTypes = {
     edit: PropTypes.object.isRequired,
     messages: PropTypes.arrayOf(
       PropTypes.shape({
-        _id: PropTypes.string.isRequired,
-        createdAt: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired,
         mssg: PropTypes.string.isRequired
       }),
     ).isRequired,
@@ -165,11 +169,26 @@ export default function CollapsibleTable() {
             user["lastVisitAt"],
             userMessages.length,
             user["role"],
-            <DeleteForeverIcon />,
+            <DeleteUserIcon _id={user._id} messages={userMessages}/>,
             userMessages
           )
         );
       });
+
+      const unregMessages = messages.filter(function (message) {
+        return message.author === "unregistred";
+      });
+      newRows.push(
+        createData(
+          "unregistred",
+          "N/A",
+          "N/A",
+          unregMessages.length,
+          "N/A",
+          <DeleteUserIcon />,
+          unregMessages
+        )
+      );
 
       setRows(newRows);
     } catch (error) {
@@ -179,7 +198,7 @@ export default function CollapsibleTable() {
 
   useEffect(() => {
     convertDataToRows();
-  }, [convertDataToRows]);
+  }, []);
 
   return (
     <div className='users-table'>
@@ -198,7 +217,7 @@ export default function CollapsibleTable() {
                 </TableHead>
                 <TableBody>
                 {rows.map((row) => (
-                    <Row key={row.name} row={row} />
+                    <Row key={row.email} row={row} />
                 ))}
                 </TableBody>
             </Table>
