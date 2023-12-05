@@ -6,3 +6,7 @@
 
     border-radius: 8px;
 }
+
+.deleteIcon {
+    cursor: pointer;
+}

@@ -13,19 +13,25 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+
+import { convertDateFormat } from './dateFormatFunction.js';
+
+import RoleSelector from './roleSelector.js';
+import DeleteUserIcon from './deleteUserIcon.js';
+import DeleteMessageIcon from './deleteMessageIcon.js';
 
 import { useEffect } from 'react';
 import { useAuthContext } from '../../hooks/useAuthContext';
 
-function createData(name, email, lastVisitAt, countMessages, role, edit, messages) {
+function createData(name, email, lastVisitAt, countMessages, role, editRole, deleteUser, messages) {
   return {
     name,
     email,
     lastVisitAt,
     countMessages,
     role,
-    edit,
+    editRole,
+    deleteUser,
     messages
   };
 }
@@ -50,9 +56,10 @@ function Row(props) {
         </TableCell>
         <TableCell align="right">{row.email}</TableCell>
         <TableCell align="right">{row.lastVisitAt}</TableCell>
-        <TableCell align="right">{row.countMessages}</TableCell>
+        <TableCell align="center">{row.countMessages}</TableCell>
         <TableCell align="right">{row.role}</TableCell>
-        <TableCell align="right">{row.edit}</TableCell>
+        <TableCell align="center">{row.editRole}</TableCell>
+        <TableCell align="center">{row.deleteUser}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -65,20 +72,22 @@ function Row(props) {
                 <TableHead>
                   <TableRow>
                     <TableCell>Date</TableCell>
+                    <TableCell>E-mail</TableCell>
                     <TableCell>Name</TableCell>
                     <TableCell>Message</TableCell>
-                    <TableCell align="right">Edit</TableCell>
+                    <TableCell>Edit</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.messages.map((message) => (
                     <TableRow key={message._id}>
                       <TableCell component="th" scope="row">
-                        {message.createdAt}
+                        {convertDateFormat(message.createdAt)}
                       </TableCell>
+                      <TableCell>{message.email}</TableCell>
                       <TableCell>{message.name}</TableCell>
                       <TableCell>{message.mssg}</TableCell>
-                      <TableCell align='right'>{<DeleteForeverIcon />}</TableCell>
+                      <TableCell align='right'>{<DeleteMessageIcon _id={message._id} />}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -98,12 +107,13 @@ Row.propTypes = {
     lastVisitAt: PropTypes.string.isRequired,
     countMessages: PropTypes.number.isRequired,
     role: PropTypes.string.isRequired,
-    edit: PropTypes.object.isRequired,
+    editRole: PropTypes.object.isRequired,
+    deleteUser: PropTypes.object.isRequired,
     messages: PropTypes.arrayOf(
       PropTypes.shape({
-        _id: PropTypes.string.isRequired,
-        createdAt: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired,
         mssg: PropTypes.string.isRequired
       }),
     ).isRequired,
@@ -162,14 +172,31 @@ export default function CollapsibleTable() {
           createData(
             user["name"],
             user["email"],
-            user["lastVisitAt"],
+            convertDateFormat(user["lastVisitAt"]),
             userMessages.length,
             user["role"],
-            <DeleteForeverIcon />,
+            <RoleSelector userID={user._id} actualRole={user["role"]}/>,
+            <DeleteUserIcon _id={user._id} messages={userMessages}/>,
             userMessages
           )
         );
       });
+
+      const unregMessages = messages.filter(function (message) {
+        return message.author === "unregistred";
+      });
+      newRows.push(
+        createData(
+          "unregistred",
+          "N/A",
+          "N/A",
+          unregMessages.length,
+          "N/A",
+          <RoleSelector />,
+          <DeleteUserIcon />,
+          unregMessages
+        )
+      );
 
       setRows(newRows);
     } catch (error) {
@@ -179,7 +206,7 @@ export default function CollapsibleTable() {
 
   useEffect(() => {
     convertDataToRows();
-  }, [convertDataToRows]);
+  }, []);
 
   return (
     <div className='users-table'>
@@ -193,12 +220,13 @@ export default function CollapsibleTable() {
                     <TableCell align="right">Last visit</TableCell>
                     <TableCell align="right">Count messages</TableCell>
                     <TableCell align="right">Role</TableCell>
-                    <TableCell align="right">Edit</TableCell>
+                    <TableCell align="right">Edit Role</TableCell>
+                    <TableCell align="right">Delete</TableCell>
                 </TableRow>
                 </TableHead>
                 <TableBody>
                 {rows.map((row) => (
-                    <Row key={row.name} row={row} />
+                    <Row key={row.email} row={row} />
                 ))}
                 </TableBody>
             </Table>
