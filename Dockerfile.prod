@@ -17,6 +17,7 @@ COPY /backend/package.json /app
 COPY /backend/package-lock.json /app
 ADD /backend/controllers /app/controllers
 ADD /backend/db /app/db
+ADD /backend/middleware /app/middleware
 ADD /backend/models /app/models
 ADD /backend/routes /app/routes
 
