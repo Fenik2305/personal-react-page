@@ -11,6 +11,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
+import TablePagination from '@mui/material/TablePagination';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
@@ -20,109 +21,47 @@ import RoleSelector from './roleSelector.js';
 import DeleteUserIcon from './deleteUserIcon.js';
 import DeleteMessageIcon from './deleteMessageIcon.js';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthContext } from '../../hooks/useAuthContext';
-
-function createData(name, email, lastVisitAt, countMessages, role, editRole, deleteUser, messages) {
-  return {
-    name,
-    email,
-    lastVisitAt,
-    countMessages,
-    role,
-    editRole,
-    deleteUser,
-    messages
-  };
-}
-
-function Row(props) {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
-
-  return (
-    <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.name}
-        </TableCell>
-        <TableCell align="right">{row.email}</TableCell>
-        <TableCell align="right">{row.lastVisitAt}</TableCell>
-        <TableCell align="center">{row.countMessages}</TableCell>
-        <TableCell align="right">{row.role}</TableCell>
-        <TableCell align="center">{row.editRole}</TableCell>
-        <TableCell align="center">{row.deleteUser}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                Messages
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>E-mail</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Message</TableCell>
-                    <TableCell>Edit</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.messages.map((message) => (
-                    <TableRow key={message._id}>
-                      <TableCell component="th" scope="row">
-                        {convertDateFormat(message.createdAt)}
-                      </TableCell>
-                      <TableCell>{message.email}</TableCell>
-                      <TableCell>{message.name}</TableCell>
-                      <TableCell>{message.mssg}</TableCell>
-                      <TableCell align='right'>{<DeleteMessageIcon _id={message._id} />}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
-  );
-}
-
-Row.propTypes = {
-  row: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-    lastVisitAt: PropTypes.string.isRequired,
-    countMessages: PropTypes.number.isRequired,
-    role: PropTypes.string.isRequired,
-    editRole: PropTypes.object.isRequired,
-    deleteUser: PropTypes.object.isRequired,
-    messages: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        email: PropTypes.string.isRequired,
-        createdAt: PropTypes.string.isRequired,
-        mssg: PropTypes.string.isRequired
-      }),
-    ).isRequired,
-  }).isRequired,
-};
 
 export default function CollapsibleTable() {
   const { user } = useAuthContext();
-  const [rows, setRows] = React.useState([]);
+  const [rows, setRows] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  function convertData(name, email, lastVisitAt, countMessages, role, editRole, deleteUser, messages) {
+    return {
+      name,
+      email,
+      lastVisitAt,
+      countMessages,
+      role,
+      editRole,
+      deleteUser,
+      messages
+    };
+  }
+  
+  Row.propTypes = {
+    row: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+      lastVisitAt: PropTypes.string.isRequired,
+      countMessages: PropTypes.number.isRequired,
+      role: PropTypes.string.isRequired,
+      editRole: PropTypes.object.isRequired,
+      deleteUser: PropTypes.object.isRequired,
+      messages: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string.isRequired,
+          email: PropTypes.string.isRequired,
+          createdAt: PropTypes.string.isRequired,
+          mssg: PropTypes.string.isRequired
+        }),
+      ).isRequired,
+    }).isRequired,
+  };
 
   const fetchMessages = async () => {
     try {
@@ -156,6 +95,70 @@ export default function CollapsibleTable() {
     }
   };
 
+  function Row(props) {
+    const { row } = props;
+    const [open, setOpen] = useState(false);
+
+    return (
+      <React.Fragment>
+        <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}>
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {row.name}
+          </TableCell>
+          <TableCell align="right">{row.email}</TableCell>
+          <TableCell align="right">{row.lastVisitAt}</TableCell>
+          <TableCell align="center">{row.countMessages}</TableCell>
+          <TableCell align="right">{row.role}</TableCell>
+          <TableCell align="center">{row.editRole}</TableCell>
+          <TableCell align="center">{row.deleteUser}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box sx={{ margin: 1 }}>
+                <Typography variant="h6" gutterBottom component="div">
+                  Messages
+                </Typography>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Date</TableCell>
+                      <TableCell>E-mail</TableCell>
+                      <TableCell>Name</TableCell>
+                      <TableCell>Message</TableCell>
+                      <TableCell>Edit</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {row.messages.map((message) => (
+                      <TableRow key={message._id}>
+                        <TableCell component="th" scope="row">
+                          {convertDateFormat(message.createdAt)}
+                        </TableCell>
+                        <TableCell>{message.email}</TableCell>
+                        <TableCell>{message.name}</TableCell>
+                        <TableCell>{message.mssg}</TableCell>
+                        <TableCell align='right'>{<DeleteMessageIcon _id={message._id} callback={convertDataToRows}/>}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
+    );
+  }
+
   const convertDataToRows = async () => {
     try {
       const messages = await fetchMessages();
@@ -169,14 +172,14 @@ export default function CollapsibleTable() {
         });
 
         newRows.push(
-          createData(
+          convertData(
             user["name"],
             user["email"],
             convertDateFormat(user["lastVisitAt"]),
             userMessages.length,
             user["role"],
-            <RoleSelector userID={user._id} actualRole={user["role"]}/>,
-            <DeleteUserIcon _id={user._id} messages={userMessages}/>,
+            <RoleSelector userID={user._id} actualRole={user["role"]} callback={convertDataToRows}/>,
+            <DeleteUserIcon _id={user._id} messages={userMessages} callback={convertDataToRows}/>,
             userMessages
           )
         );
@@ -186,14 +189,14 @@ export default function CollapsibleTable() {
         return message.author === "unregistred";
       });
       newRows.push(
-        createData(
-          "unregistred",
-          "N/A",
-          "N/A",
+        convertData(
+          "unregistred\nusers",
+          "",
+          "",
           unregMessages.length,
-          "N/A",
-          <RoleSelector />,
-          <DeleteUserIcon />,
+          "",
+          <Typography />,
+          <Typography />,
           unregMessages
         )
       );
@@ -202,6 +205,16 @@ export default function CollapsibleTable() {
     } catch (error) {
       console.log("Data fetching error:", error);
     }
+  };
+
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   useEffect(() => {
@@ -225,11 +238,22 @@ export default function CollapsibleTable() {
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                {rows.map((row) => (
-                    <Row key={row.email} row={row} />
+
+                {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                  <Row key={row.email} row={row} />
                 ))}
+                
                 </TableBody>
             </Table>
+            <TablePagination
+              component="div"
+              count={rows.length}
+              page={page}
+              onPageChange={handleChangePage}
+              rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              rowsPerPageOptions={[3, 5, 10]}
+            />
         </TableContainer>
     </div>
   );
