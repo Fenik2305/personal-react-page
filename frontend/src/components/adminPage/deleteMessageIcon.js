@@ -6,6 +6,8 @@ export default function DeleteMessageIcon(props) {
   const { user } = useAuthContext();
   const messageID = props._id;
 
+  const updateTableData = props.callback;
+
   const deleteMessage = async () => {
     try {
       const response = await fetch(`/api/messages/${messageID}`, {
@@ -16,8 +18,10 @@ export default function DeleteMessageIcon(props) {
       });
 
       if (response.ok) {
+        updateTableData()
         console.log(`Message with ID ${messageID} deleted successfully`);
       } else {
+        updateTableData()
         console.error(`Failed to delete message with ID ${messageID}`);
       }
     } catch (error) {

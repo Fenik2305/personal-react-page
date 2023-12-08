@@ -10,6 +10,9 @@ export default function RoleSelector(props) {
 
     const userID = props.userID;
     const actualRole = props.actualRole;
+    
+    const updateTableData = props.callback;
+
 
     const updateUserRole = async () => {
         const newUserRole = document.getElementById(`role-selector-${userID}`).value;
@@ -27,8 +30,10 @@ export default function RoleSelector(props) {
             });
       
             if (response.ok) {
+              updateTableData()
               console.log(`User ${userID} updated successfully`);
             } else {
+              updateTableData()
               console.error(`Failed to update user ${userID}`);
             }
           } catch (error) {

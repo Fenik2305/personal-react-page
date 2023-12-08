@@ -1,0 +1,8 @@
+.messages-table {
+    max-width: 1200px;
+    height: auto;
+
+    margin: 20px auto 120px auto;
+
+    border-radius: 8px;
+}

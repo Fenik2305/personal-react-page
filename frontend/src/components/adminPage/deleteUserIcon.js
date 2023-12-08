@@ -7,6 +7,8 @@ export default function DeleteUserIcon( props ) {
     const userID = props._id;
     const userMessages = props.messages;
 
+    const updateTableData = props.callback;
+
     const deleteMessage = async (messageID) => {
       try {
         const response = await fetch(`/api/messages/${messageID}`, {
@@ -44,8 +46,10 @@ export default function DeleteUserIcon( props ) {
         });
   
         if (response.ok) {
+          updateTableData()
           console.log(`User with ID ${userID} deleted successfully`);
         } else {
+          updateTableData()
           console.error(`Failed to delete user with ID ${userID}`);
         }
       } catch (error) {
