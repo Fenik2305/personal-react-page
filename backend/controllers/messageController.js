@@ -8,6 +8,30 @@ const getMessages = async (req, res) => {
     res.status(200).json(messages)
 };
 
+// GET messages page
+const getMessagesPage = async (req, res) => {
+    const { userID } = req.params
+
+    const messages = await Message.find({ author: userID }).sort({createdAt: -1})
+
+    const length = messages.length;
+    const pageNum = parseInt(req.query.pageNum);
+    const limit = parseInt(req.query.limit);
+    const sort = req.query.sort == "asc" ? 1 : -1;
+
+    startIdx = pageNum * limit;
+    endIdx = Math.min(startIdx + limit, length);
+
+    const page = {
+        totalItems: length,
+        items: messages.slice(startIdx, endIdx),
+        totalPages: Math.ceil(length / limit),
+        currentPage: pageNum
+    };
+
+    res.status(200).json(page);
+}
+
 // GET user messages
 const getUserMessages = async (req, res) => {
     const { userID } = req.params
@@ -71,6 +95,7 @@ const deleteMessages = async (req, res) => {
 
 module.exports = {
     getMessages,
+    getMessagesPage,
     getUserMessages,
     getMessage,
     createMessage,
