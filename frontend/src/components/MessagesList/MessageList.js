@@ -40,23 +40,30 @@ export default function BasicTable() {
     fetchPage(0, parseInt(event.target.value, 10));
   };
 
-  const fetchPage = async (pageNum, limit) => {
+  const fetchPage = async (pageNum, itemsLimit, propFilter = "createdAt", sortOrder = "-1") => {
     try {
-      const response = await fetch(`/api/messages/message-pages/${user._id}?pageNum=${pageNum}&limit=${limit}&filter=createdAt&sort=asc`, {
+      const params = new URLSearchParams({
+        pageNum: pageNum,
+        itemsLimit: itemsLimit,
+        propFilter: propFilter,
+        sortOrder: sortOrder,
+      });
+  
+      const response = await fetch(`/api/messages/message-pages/${user._id}?${params.toString()}`, {
         headers: {
           'Authorization': `Bearer ${user.token}`
         }
       });
-
+  
       const fetchedPage = await response.json();
-
+  
       setMessages(fetchedPage["items"]);
       setPaginatorPage(fetchedPage["currentPage"]);
       setPaginatorCount(fetchedPage["totalItems"]);
-
+  
       return fetchedPage;
     } catch (error) {
-      console.log("Page fetching error:", error);
+      console.log("Page fetching error: ", error);
     }
   };
 

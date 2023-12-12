@@ -12,12 +12,21 @@ const getMessages = async (req, res) => {
 const getMessagesPage = async (req, res) => {
     const { userID } = req.params
 
-    const messages = await Message.find({ author: userID }).sort({createdAt: -1})
+    const pageNum = parseInt(req.query.pageNum);
+    const limit = parseInt(req.query.itemsLimit);
+    const filter = req.query.propFilter;
+    const sort = parseInt(req.query.sortOrder);
+
+    const messagesFilter = {
+        author: userID
+    };
+
+    const messagesSort = {};
+    messagesSort[filter] = sort;
+
+    const messages = await Message.find(messagesFilter).sort(messagesSort);
 
     const length = messages.length;
-    const pageNum = parseInt(req.query.pageNum);
-    const limit = parseInt(req.query.limit);
-    const sort = req.query.sort == "asc" ? 1 : -1;
 
     startIdx = pageNum * limit;
     endIdx = Math.min(startIdx + limit, length);

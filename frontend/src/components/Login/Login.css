@@ -7,3 +7,14 @@
     border-radius: 4px;
 }
 
+.forgot-password-label {
+    text-align: center;
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.forgot-password-label:hover {
+    color: #3468c9;
+    text-decoration: underline;
+}
