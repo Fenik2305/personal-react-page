@@ -40,7 +40,7 @@ export default function BasicTable() {
     fetchPage(0, parseInt(event.target.value, 10));
   };
 
-  const fetchPage = async (pageNum, itemsLimit, propFilter = "createdAt", sortOrder = "-1") => {
+  const fetchPage = async (pageNum, itemsLimit, propFilter = "createdAt", sortOrder = "des") => {
     try {
       const params = new URLSearchParams({
         pageNum: pageNum,

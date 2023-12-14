@@ -15,7 +15,7 @@ const getMessagesPage = async (req, res) => {
     const pageNum = parseInt(req.query.pageNum);
     const limit = parseInt(req.query.itemsLimit);
     const filter = req.query.propFilter;
-    const sort = parseInt(req.query.sortOrder);
+    const sort = req.query.sortOrder == "asc" ? 1 : (req.query.sortOrder == "des" ? -1 : 1);
 
     const messagesFilter = {
         author: userID

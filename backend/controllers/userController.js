@@ -1,6 +1,7 @@
 const User = require('../models/userModel.js');
 const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const mailer = require('../mailer.js');
 
 const createToken = (_id, role) => {
     return jwt.sign({_id: _id, role: role}, process.env.SECRET, {expiresIn: "7d"})
@@ -37,6 +38,14 @@ const signupUser = async (req, res) => {
         //create token
         const token = createToken(_id, role)
 
+        {/*const message = {
+            to: email,
+            subject: "Email verification.",
+            text: "test test test"
+        };*/}
+
+        //mailer(message);
+        
         res.status(200).json({email, _id, token})
     } catch (error) {
         res.status(400).json({error: error.message})
