@@ -1,14 +1,12 @@
 import * as React from 'react';
+
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 import Login from '../Login/Login.js';
-import LoginStyles from '../Login/Login.css';
 import Signup from '../Signup/Signup.js';
-import SignupStyles from '../Signup/Signup.js';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -23,7 +21,7 @@ function CustomTabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>

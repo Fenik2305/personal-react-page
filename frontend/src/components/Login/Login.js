@@ -26,6 +26,7 @@ const Login = () => {
                     inputProps={{style: {fontSize: "26px"}}}/>
                 <TextField
                     id='password'
+                    type='password'
                     label='Password'
                     helperText='Please enter your password'
                     onChange={(e) => setPassword(e.target.value)}

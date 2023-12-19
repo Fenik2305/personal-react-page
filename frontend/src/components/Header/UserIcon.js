@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useLogout } from "../../hooks/useLogout";
 
@@ -8,10 +8,11 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 
-export default function UserIcon( props ) {
+export default function UserIcon() {
     const { user } = useAuthContext()
     const { logout } = useLogout()
     const [anchorEl, setAnchorEl] = useState(null);
+    const navigate = useNavigate();
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -19,6 +20,17 @@ export default function UserIcon( props ) {
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        handleClose();
+        logout();
+        navigate('/');
+    };
+
+    const handleAdminMenu = () => {
+        handleClose();
+        navigate('/admin');
     };
 
     return ( 
@@ -48,7 +60,9 @@ export default function UserIcon( props ) {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}>
 
-                {user && (<MenuItem onClick={logout}>LogOut</MenuItem>)}
+                {user && user.role === "admin" && (<MenuItem onClick={handleAdminMenu}>AdminMenu</MenuItem>)}
+
+                {user && (<MenuItem onClick={handleLogout}>LogOut</MenuItem>)}
 
                 {!user && (
                     <MenuItem onClick={handleClose}>
@@ -58,8 +72,3 @@ export default function UserIcon( props ) {
         </div>
     );
 }
-
-
-
-
-<Link className="UserActionsElement" to='/signup'>SIGNUP</Link>

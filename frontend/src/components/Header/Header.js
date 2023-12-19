@@ -3,7 +3,6 @@ import { Link } from "react-router-dom"
 
 import { Badge, Button } from "@mui/material";
 
-import { useLogout } from "../../hooks/useLogout";
 import { useMessagesContext } from "../../hooks/useMessagesContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
@@ -11,12 +10,15 @@ import UserIcon from './UserIcon'
 
 export default function Header() {
     const { user } = useAuthContext()
-    const { logout } = useLogout()
     const { messages, dispatch } = useMessagesContext()
 
     useEffect(() => {
       const fetchMessages = async () => {
-        const response = await fetch('/api/messages')
+        const response = await fetch(`/api/messages/${user._id}`, {
+          headers: {
+            'Authorization': `Bearer ${user.token}`
+          }
+        })
         const json = await response.json()
 
         if (response.ok) {
@@ -24,12 +26,10 @@ export default function Header() {
         }
       }
 
-      fetchMessages()
-    }, [dispatch])
-
-    const handleLogout = () => {
-      logout()
-    }
+      if (user) {
+        fetchMessages()
+      }
+    }, [user, dispatch])
 
     return (
         <header className="Header">
@@ -49,22 +49,6 @@ export default function Header() {
               </Badge>)}
               
               <UserIcon />
-
-              {/*{!user && (<nav className="UserActionsBlock">
-                <Link className="UserActionsElement" to='/login'>LOGIN</Link>
-                <Link className="UserActionsElement" to='/signup'>SIGNUP</Link>
-              </nav>)}
-
-              {user && (
-                <Button
-                    className="UserActionsElement"
-                    variant="outline"
-                    size='large'
-                    style={{maxWidth: '170px'}}
-                    onClick={handleLogout}>
-                    Log out
-                </Button>)}
-              */}
             </div>
         </header>
     );

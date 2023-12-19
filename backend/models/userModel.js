@@ -1,10 +1,16 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const roles = require("./roles.js")
 
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+    name: {
+        type: String,
+        required: false,
+        default: "noname"
+    },
     email: {
         type: String,
         required: true,
@@ -13,15 +19,30 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: true
+    },
+    role: {
+        type: String,
+        required: true,
+        default: roles.ADMIN
+    },
+    isDisabled: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    lastVisitAt: {
+        type: Date,
+        required: true,
+        default: Date.now()
     }
 });
 
 // static signup method
-userSchema.statics.signup = async function (email, password) {
+userSchema.statics.signup = async function (name, email, password) {
 
     // validation
     if (!email || !password) {
-        throw Error("All fields must be filled!");
+        throw Error("Email and password fields must be filled!");
     }
 
     const exists = await this.findOne({ email })
@@ -33,10 +54,12 @@ userSchema.statics.signup = async function (email, password) {
         throw Error("Email isn't valid!")
     }
 
+    name = name ? name : "noname" 
+
     const salt = await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(password, salt)
 
-    const user = await this.create({ email, password: hash })
+    const user = await this.create({ name, email, password: hash })
 
     return user
 }

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Stack, TextField, Button } from "@mui/material";
 import { useMessagesContext } from "../../hooks/useMessagesContext.js"
-import { useAuthContext } from "../../hooks/useAuthContext.js"; 
+import { useAuthContext } from "../../hooks/useAuthContext.js"
 import './Contacts.css'
 
 export default function Contacts() {
-    const { user } = useAuthContext();
     const { dispatch } = useMessagesContext();
+    const { user } = useAuthContext();
     const [emailError, setEmailError] = useState(false);
 
     const emailValidation = (input) => {
@@ -24,7 +24,8 @@ export default function Contacts() {
         const message = {
             name: name ? name : "N/A",
             email: email ? email : "N/A",
-            mssg : mssg  ? mssg  : "N/A"
+            mssg : mssg  ? mssg  : "N/A",
+            author : user ? user._id : "unregistred",
         };
 
         const response = await fetch('/api/messages', {
@@ -35,6 +36,7 @@ export default function Contacts() {
             }
         })
 
+
         const json = await response.json()
 
 
@@ -42,7 +44,9 @@ export default function Contacts() {
             document.getElementById("name").value = "";
             document.getElementById("email").value = "";
             document.getElementById("mssg ").value = "";
-            dispatch({type: 'CREATE_MESSAGE', payload: json})
+            if (user) {
+                dispatch({type: 'CREATE_MESSAGE', payload: json})
+            }
         }
     };
 
@@ -53,21 +57,23 @@ export default function Contacts() {
                     <TextField
                         id='name'
                         label='Name'
+                        defaultValue={user ? user.name : ""}
                         helperText='Please enter your name'
-                        inputProps={{style: {fontSize: "26px"}}}/>
+                        inputProps={{style: {fontSize: "24px"}}}/>
                     <TextField
                         required
                         id='email'
                         label={"E-mail"}
+                        defaultValue={user ? user.email : ""}
                         error={emailError}
                         helperText={!emailError ? "Please enter your email" : "Only 'email@example.com' format"}
-                        inputProps={{style: {fontSize: "26px"}}}/>
+                        inputProps={{style: {fontSize: "24px"}}}/>
                 </Stack>
                     <TextField
                         id='mssg '
                         variant="filled"
                         label='Please write your message'
-                        inputProps={{style: {fontSize: "26px"}}}/>
+                        inputProps={{style: {fontSize: "24px"}}}/>
                     <Button 
                         variant="contained"
                         size='large'
