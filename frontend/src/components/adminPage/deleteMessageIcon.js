@@ -4,13 +4,12 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 
 export default function DeleteMessageIcon(props) {
   const { user } = useAuthContext();
-  const messageID = props._id;
 
-  const updateTableData = props.callback;
+  const { messageIdx, updateTable, updateTableParams } = props;
 
   const deleteMessage = async () => {
     try {
-      const response = await fetch(`/api/messages/${messageID}`, {
+      const response = await fetch(`/api/messages/${messageIdx}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${user.token}`
@@ -18,13 +17,14 @@ export default function DeleteMessageIcon(props) {
       });
 
       if (response.ok) {
-        updateTableData()
-        console.log(`Message with ID ${messageID} deleted successfully`);
+        updateTable(updateTableParams[0], updateTableParams[1]);
+        console.log(`Message with Idx ${messageIdx} deleted successfully`);
       } else {
-        updateTableData()
-        console.error(`Failed to delete message with ID ${messageID}`);
+        updateTable(updateTableParams[0], updateTableParams[1]);
+        console.error(`Failed to delete message with Idx ${messageIdx}`);
       }
     } catch (error) {
+      updateTable(updateTableParams[0], updateTableParams[1]);
       console.error("Message deleting error: ", error);
     }
   }

@@ -1,5 +1,6 @@
 const Message = require("../models/messageModel.js");
 const mongoose = require("mongoose");
+const { v4: uuidv4 } = require('uuid');
 
 // GET all messages
 const getMessages = async (req, res) => {
@@ -10,31 +11,30 @@ const getMessages = async (req, res) => {
 
 // GET messages page
 const getMessagesPage = async (req, res) => {
-    const { userID } = req.params
+    const { userID } = req.params;
 
-    const pageNum = parseInt(req.query.pageNum);
-    const limit = parseInt(req.query.itemsLimit);
-    const filter = req.query.propFilter;
-    const sort = req.query.sortOrder == "asc" ? 1 : (req.query.sortOrder == "des" ? -1 : 1);
+    const { pageNum, itemsLimit, propFilter, sortOrder } = req.query;
+    const sort = sortOrder === "des" ? -1 : 1;
+
+    const totalMessages = await Message.countDocuments({ author: userID })
 
     const messagesFilter = {
         author: userID
     };
 
     const messagesSort = {};
-    messagesSort[filter] = sort;
+    messagesSort[propFilter] = sort;
 
-    const messages = await Message.find(messagesFilter).sort(messagesSort);
-
-    const length = messages.length;
-
-    startIdx = pageNum * limit;
-    endIdx = Math.min(startIdx + limit, length);
+    const messages = await Message.find(messagesFilter)
+                                  .sort(messagesSort)
+                                  .skip(pageNum * itemsLimit)
+                                  .limit(itemsLimit)
+                                  .select('-_id -__v -author');
 
     const page = {
-        totalItems: length,
-        items: messages.slice(startIdx, endIdx),
-        totalPages: Math.ceil(length / limit),
+        totalItems: totalMessages,
+        items: messages,
+        totalPages: Math.ceil(totalMessages / itemsLimit),
         currentPage: pageNum
     };
 
@@ -71,8 +71,10 @@ const getMessage = async (req, res) => {
 const createMessage = async (req, res) => {
     const {name, email, mssg, author} = req.body
 
+    const idx = uuidv4();
+
     try {
-        const message = await Message.create({ name, email, mssg, author })
+        const message = await Message.create({ idx, name, email, mssg, author })
         res.status(200).json(message)
     } catch (error) {
         res.status(400).json({error: error.message})
@@ -81,13 +83,9 @@ const createMessage = async (req, res) => {
 
 // DELETE a message
 const deleteMessage = async (req, res) => {
-    const { id } = req.params
+    const { idx } = req.params
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: "No such message!"})
-    }
-
-    const message = await Message.findOneAndDelete({_id: id})
+    const message = await Message.findOneAndDelete({ idx: idx })
 
     if (!message) {
         return res.status(404).json({error: "No such message!"})

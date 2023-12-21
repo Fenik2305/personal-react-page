@@ -13,6 +13,9 @@ const {
 
 const router = express.Router()
 
+// DELETE a message
+router.delete('/:idx', AuthController.roleAuthorization(["admin"]), deleteMessage);
+
 // GET all messages
 router.get('/', AuthController.roleAuthorization(["admin"]), getMessages);
 
@@ -23,7 +26,7 @@ router.post('/', createMessage);
 router.delete('/', AuthController.roleAuthorization(["admin"]), deleteMessages);
 
 // GET messages page
-router.get('/message-pages/:userID', AuthController.roleAuthorization(["user", "admin"]), getMessagesPage);
+router.get('/messagePages/:userID', AuthController.roleAuthorization(["user", "admin"]), getMessagesPage);
 
 // GET all user's messages
 router.get('/:userID', AuthController.roleAuthorization(["user", "admin"]), getUserMessages)
@@ -31,7 +34,6 @@ router.get('/:userID', AuthController.roleAuthorization(["user", "admin"]), getU
 // GET a single message
 router.get('/:id', AuthController.roleAuthorization(["user", "admin"]), getMessage);
 
-// DELETE a message
-router.delete('/:id', AuthController.roleAuthorization(["admin"]), deleteMessage);
+
 
 module.exports = router

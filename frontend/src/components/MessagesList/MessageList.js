@@ -49,7 +49,7 @@ export default function BasicTable() {
         sortOrder: sortOrder,
       });
   
-      const response = await fetch(`/api/messages/message-pages/${user._id}?${params.toString()}`, {
+      const response = await fetch(`/api/messages/messagePages/${user._id}?${params.toString()}`, {
         headers: {
           'Authorization': `Bearer ${user.token}`
         }

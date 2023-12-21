@@ -3,42 +3,12 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useAuthContext } from '../../hooks/useAuthContext';
 
 export default function DeleteUserIcon( props ) {
-    const { user } = useAuthContext()
-    const userID = props._id;
-    const userMessages = props.messages;
-
-    const updateTableData = props.callback;
-
-    const deleteMessage = async (messageID) => {
-      try {
-        const response = await fetch(`/api/messages/${messageID}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${user.token}`
-          }
-        });
-  
-        if (response.ok) {
-          console.log(`Message with ID ${messageID} deleted successfully`);
-        } else {
-          console.error(`Failed to delete message with ID ${messageID}`);
-        }
-      } catch (error) {
-        console.error("Message deleting error: ", error);
-      }
-    }
-
-    const deleteUserMessages = async () => {
-      userMessages.forEach(message => {
-        deleteMessage(message._id)
-      });
-    }
+    const { user } = useAuthContext();
+    const { email, updateTable, updateTableParams } = props;
 
     const deleteUser = async () => {
-      deleteUserMessages()
-
       try {
-        const response = await fetch(`/api/user/${userID}`, {
+        const response = await fetch(`/api/user/deleteByEmail/${email}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${user.token}`
@@ -46,18 +16,17 @@ export default function DeleteUserIcon( props ) {
         });
   
         if (response.ok) {
-          updateTableData()
-          console.log(`User with ID ${userID} deleted successfully`);
+          updateTable(updateTableParams[0], updateTableParams[1]);
+          console.log(`User with email ${email} deleted successfully`);
         } else {
-          updateTableData()
-          console.error(`Failed to delete user with ID ${userID}`);
+          updateTable(updateTableParams[0], updateTableParams[1]);
+          console.error(`Failed to delete user with email ${email}`);
         }
       } catch (error) {
+        updateTable(updateTableParams[0], updateTableParams[1]);
         console.error("User deleting error: ", error);
       }
     }
-
-    
 
     return (
       <div className='deleteIcon'>
