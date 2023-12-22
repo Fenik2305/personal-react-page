@@ -31,7 +31,7 @@ export default function BasicTable() {
       setPaginatorPage(newPage);
       setPaginatorCount(fetchedPage["totalItems"]);
     } catch (error) {
-      console.log("Page fetching error:", error);
+      alert("Page fetching error:", error);
     }
   };
 
@@ -43,10 +43,10 @@ export default function BasicTable() {
   const fetchPage = async (pageNum, itemsLimit, propFilter = "createdAt", sortOrder = "des") => {
     try {
       const params = new URLSearchParams({
-        pageNum: pageNum,
-        itemsLimit: itemsLimit,
-        propFilter: propFilter,
-        sortOrder: sortOrder,
+        pageNum: encodeURIComponent(pageNum),
+        itemsLimit: encodeURIComponent(itemsLimit),
+        propFilter: encodeURIComponent(propFilter),
+        sortOrder: encodeURIComponent(sortOrder),
       });
   
       const response = await fetch(`/api/messages/messagePages/${user._id}?${params.toString()}`, {
@@ -63,7 +63,7 @@ export default function BasicTable() {
   
       return fetchedPage;
     } catch (error) {
-      console.log("Page fetching error: ", error);
+      alert("Page fetching error: ", error);
     }
   };
 

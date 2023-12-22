@@ -17,14 +17,13 @@ export default function DeleteUserIcon( props ) {
   
         if (response.ok) {
           updateTable(updateTableParams[0], updateTableParams[1]);
-          console.log(`User with email ${email} deleted successfully`);
         } else {
           updateTable(updateTableParams[0], updateTableParams[1]);
-          console.error(`Failed to delete user with email ${email}`);
+          alert(`Failed to delete user with email ${email}`);
         }
       } catch (error) {
         updateTable(updateTableParams[0], updateTableParams[1]);
-        console.error("User deleting error: ", error);
+        alert("User deleting error: ", error);
       }
     }
 

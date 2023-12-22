@@ -8,7 +8,7 @@ const { loginUser,
         updateUser,
         deleteUser, 
         getUsers,
-        getUsersPage, 
+        getPaginatedUsersWithMessages, 
         deleteUserByEmail,
         updateUserByEmail} = require('../controllers/userController.js')
 
@@ -18,7 +18,7 @@ const router = express.Router()
 router.get('/', AuthController.roleAuthorization(['admin']), getUsers)
 
 //get users page
-router.get('/userPages/', AuthController.roleAuthorization(['admin']), getUsersPage)
+router.get('/userPages/', AuthController.roleAuthorization(['admin']), getPaginatedUsersWithMessages)
 
 //login user
 router.post('/login', loginUser)

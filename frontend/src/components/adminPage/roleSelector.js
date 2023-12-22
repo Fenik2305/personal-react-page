@@ -27,14 +27,13 @@ export default function RoleSelector(props) {
       
             if (response.ok) {
               updateTable(updateTableParams[0], updateTableParams[1]);
-              console.log(`User ${email} updated successfully`);
             } else {
               updateTable(updateTableParams[0], updateTableParams[1]);
-              console.error(`Failed to update user ${email}`);
+              alert(`Failed to update user ${email}`);
             }
           } catch (error) {
             updateTable(updateTableParams[0], updateTableParams[1]);
-            console.error("User updating error: ", error);
+            alert("User updating error: ", error);
           }
     }
 

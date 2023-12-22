@@ -18,14 +18,13 @@ export default function DeleteMessageIcon(props) {
 
       if (response.ok) {
         updateTable(updateTableParams[0], updateTableParams[1]);
-        console.log(`Message with Idx ${messageIdx} deleted successfully`);
       } else {
         updateTable(updateTableParams[0], updateTableParams[1]);
-        console.error(`Failed to delete message with Idx ${messageIdx}`);
+        alert(`Failed to delete message with Idx ${messageIdx}`);
       }
     } catch (error) {
       updateTable(updateTableParams[0], updateTableParams[1]);
-      console.error("Message deleting error: ", error);
+      alert("Message deleting error: ", error);
     }
   }
   return (

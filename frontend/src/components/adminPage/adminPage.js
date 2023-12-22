@@ -68,10 +68,10 @@ export default function CollapsibleTable() {
   const fetchPage = async (pageNum, itemsLimit, propFilter = "lastVisitAt", sortOrder = "asc") => {
     try {
       const params = new URLSearchParams({
-        pageNum: pageNum,
-        itemsLimit: itemsLimit,
-        propFilter: propFilter,
-        sortOrder: sortOrder,
+        pageNum: encodeURIComponent(pageNum),
+        itemsLimit: encodeURIComponent(itemsLimit),
+        propFilter: encodeURIComponent(propFilter),
+        sortOrder: encodeURIComponent(sortOrder),
       });
   
       const response = await fetch(`/api/user/userPages/?${params.toString()}`, {
@@ -108,7 +108,7 @@ export default function CollapsibleTable() {
       setRows(newRows);
 
     } catch (error) {
-      console.log("Page fetching error: ", error);
+      alert("Page fetching error: ", error);
     }
   };
 

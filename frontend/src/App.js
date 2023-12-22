@@ -10,7 +10,6 @@ import MessagesList from './components/MessagesList/MessageList.js';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import AuthPage from './components/AuthPage/AuthPage.js';
-import RecoveryPage from "./components/recoveryPage/recoveryPage.js";
 import CollapsibleTable from './components/adminPage/adminPage.js';
 
 import GeneralInfoStyles from './components/HomePage/GeneralInfo.css';
@@ -20,7 +19,6 @@ import MessagesListStyles from './components/MessagesList/MessageList.css';
 import HeaderStyles from './components/Header/Header.css';
 import FooterStyles from './components/Footer/Footer.css';
 import AuthPageStyles from './components/AuthPage/AuthPage.css';
-import RecoveryPageStyles from './components/recoveryPage/recoveryPage.css';
 import adminPageStyles from './components/adminPage/adminPage.css';
 
 function App() {
@@ -37,7 +35,6 @@ function App() {
             <Route path='/messages' element={user ? <MessagesList /> : <Navigate to="/" />} />
             <Route path='/authpage' element={user ? <Navigate to="/" /> : <AuthPage />} />
             <Route path='/admin' element={user ? <CollapsibleTable /> : <Navigate to="/" />} />
-            <Route path='/password-recovery' element={user ? <Navigate to="/" /> : <RecoveryPage />} />
         </Routes>
       </div>
       <Footer />

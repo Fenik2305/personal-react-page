@@ -3,10 +3,9 @@ const Message = require('../models/messageModel.js');
 const mongoose = require('mongoose');
 
 const jwt = require('jsonwebtoken');
-const mailer = require('../mailer.js');
 
 const createToken = (_id, role) => {
-    return jwt.sign({_id: _id, role: role}, process.env.SECRET, {expiresIn: "7d"})
+    return jwt.sign({_id: _id, role: role}, process.env.SECRET, {expiresIn: "12h"})
 }
 
 const loginUser = async (req, res) => {
@@ -34,16 +33,7 @@ const signupUser = async (req, res) => {
         const _id = user._id
         const role = user.role
 
-        //create token
         const token = createToken(_id, role)
-
-        {/*const message = {
-            to: email,
-            subject: "Email verification.",
-            text: "test test test"
-        };*/}
-
-        //mailer(message);
         
         res.status(200).json({email, _id, token})
     } catch (error) {
@@ -119,7 +109,7 @@ const getUsers = async (req, res) => {
     }
 }
 
-const getUsersPage = async (req, res) => {
+const getPaginatedUsersWithMessages = async (req, res) => {
     const { pageNum, itemsLimit, propFilter, sortOrder } = req.query;
     const sort = sortOrder === "des" ? -1 : 1;
     
@@ -193,4 +183,4 @@ const getUsersPage = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, signupUser, updateUser, updateUserByEmail, deleteUser, deleteUserByEmail, getUsers, getUsersPage }
+module.exports = { loginUser, signupUser, updateUser, updateUserByEmail, deleteUser, deleteUserByEmail, getUsers, getPaginatedUsersWithMessages }
