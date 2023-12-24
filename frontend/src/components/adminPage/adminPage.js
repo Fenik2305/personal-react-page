@@ -24,7 +24,7 @@ import DeleteMessageIcon from './deleteMessageIcon.js';
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../../hooks/useAuthContext';
 
-export default function CollapsibleTable() {
+export default function AdminPage() {
   const { user } = useAuthContext();
   const [rows, setRows] = useState([]);
 

@@ -15,7 +15,7 @@ function convertData(createdAt, name, email, mssg) {
   return { createdAt, name, email, mssg };
 }
 
-export default function BasicTable() {
+export default function MessageList() {
   const { user } = useAuthContext();
 
   const [paginatorCount, setPaginatorCount] = React.useState(0);

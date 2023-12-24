@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom"
 
-import { Badge, Button } from "@mui/material";
+import { Badge } from "@mui/material";
 
 import { useMessagesContext } from "../../hooks/useMessagesContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
