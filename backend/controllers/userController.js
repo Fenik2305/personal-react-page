@@ -12,6 +12,16 @@ const loginUser = async (req, res) => {
     const {email, password} = req.body
 
     try {
+        const userValidation = await User.findOne({ email });
+
+        if (!userValidation) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        if (userValidation.isDisabled) {
+            return res.status(401).json({ error: "Account is disabled" });
+        }
+
         const user = await User.login(email, password)
         const _id = user._id
         const name = user.name
@@ -88,7 +98,10 @@ const deleteUser = async (req, res) => {
 const deleteUserByEmail = async (req, res) => {
     const { email } = req.params
 
-    const user = await User.findOneAndDelete({ email: email })
+    const user = await User.findOneAndUpdate({ email: email },
+        { $set: { isDisabled: true } },
+        { new: true }
+    );
 
     if (!user) {
         return res.status(404).json({error: "No such user!"})
@@ -117,11 +130,11 @@ const getPaginatedUsersWithMessages = async (req, res) => {
     usersSort[propFilter] = sort;
 
     try {
-        const totalUsers = await User.countDocuments() + 1; //users + unreg mssgs
+        const totalUsers = await User.countDocuments({ isDisabled: false }) + 1; //users + unreg mssgs
 
         const totalPages = Math.ceil(totalUsers / itemsLimit);
 
-        const usersForPage = await User.find({})
+        const usersForPage = await User.find({ isDisabled: false })
             .sort(usersSort)
             .skip(pageNum * itemsLimit)
             .limit(itemsLimit)

@@ -42,8 +42,6 @@ const Login = () => {
                     Log in
                 </Button>
                 
-                <Link className="forgot-password-label" to='/password-recovery'>Forgot your password?</Link>
-
                 {error && <label>{error}</label>}
             </Stack>
         </div>
