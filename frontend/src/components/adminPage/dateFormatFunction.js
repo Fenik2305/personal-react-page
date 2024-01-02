@@ -7,14 +7,12 @@ export function convertDateFormat(inputTime) {
   
     if (timeDifference < oneDayInMilliseconds * 2) {
       if (currentDate.getDate() === inputDate.getDate()) {
-        // Today
         return `Today ${formatDate(inputDate)} ${format12HourTime(inputDate)}`;
       } else if (
         currentDate.getDate() - inputDate.getDate() === 1 &&
         currentDate.getMonth() === inputDate.getMonth() &&
         currentDate.getFullYear() === inputDate.getFullYear()
       ) {
-        // Yesterday
         return `Yesterday ${formatDate(inputDate)} ${format12HourTime(inputDate)}`;
       }
     }

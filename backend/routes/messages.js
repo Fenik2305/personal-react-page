@@ -3,31 +3,26 @@ const AuthController = require('../controllers/authController.js');
 
 const {
     getMessages,
-    getUserMessages,
-    getMessage,
+    getMessagesPage,
     createMessage,
     deleteMessage,
-    deleteMessages
+    countUserMessages
 } = require("../controllers/messageController.js")
 
 const router = express.Router()
 
-// GET all messages
-router.get('/', AuthController.roleAuthorization(["admin"]), getMessages);
-
-// GET all user's messages
-router.get('/:userID', AuthController.roleAuthorization(["user", "admin"]), getUserMessages)
-
-// GET a single message
-router.get('/:id', AuthController.roleAuthorization(["user", "admin"]), getMessage);
-
 // POST a new message
 router.post('/', createMessage);
 
-// DELETE a message
-router.delete('/:id', AuthController.roleAuthorization(["admin"]), deleteMessage);
+router.get('/count/:userID', AuthController.roleAuthorization(['user', 'admin']), countUserMessages)
 
-// DELETE all messages
-router.delete('/', AuthController.roleAuthorization(["admin"]), deleteMessages);
+// GET all messages
+router.get('/', AuthController.roleAuthorization(["admin"]), getMessages);
+
+// DELETE a message by index
+router.delete('/:idx', AuthController.roleAuthorization(["admin"]), deleteMessage);
+
+// GET messages page
+router.get('/messagePages/:userID', AuthController.roleAuthorization(["user", "admin"]), getMessagesPage);
 
 module.exports = router

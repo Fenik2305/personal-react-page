@@ -1,6 +1,9 @@
 import { useState } from "react"
 import { useLogin } from "../../hooks/useLogin.js"
 import { Stack, TextField, Button } from "@mui/material";
+import { Link } from "react-router-dom"
+
+import LoginPageStyles from "./Login.css";
 
 const Login = () => {
     const [email, setEmail] = useState('')
@@ -34,11 +37,11 @@ const Login = () => {
                 <Button 
                     variant="contained"
                     size='large'
-                    style={{maxWidth: '170px'}}
                     disabled={isLoading}
                     onClick={handleSubmit}>
                     Log in
                 </Button>
+                
                 {error && <label>{error}</label>}
             </Stack>
         </div>

@@ -8,17 +8,13 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 export default function RoleSelector(props) {
     const { user } = useAuthContext()
 
-    const userID = props.userID;
-    const actualRole = props.actualRole;
-    
-    const updateTableData = props.callback;
-
+    const { email, actualRole, updateTable, updateTableParams  } = props;
 
     const updateUserRole = async () => {
-        const newUserRole = document.getElementById(`role-selector-${userID}`).value;
+        const newUserRole = document.getElementById(`role-selector-${email}`).value;
         
         try {
-            const response = await fetch(`/api/user/${userID}`, {
+            const response = await fetch(`/api/user/updateRoleByEmail/${email}`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${user.token}`,
@@ -30,14 +26,14 @@ export default function RoleSelector(props) {
             });
       
             if (response.ok) {
-              updateTableData()
-              console.log(`User ${userID} updated successfully`);
+              updateTable(updateTableParams[0], updateTableParams[1]);
             } else {
-              updateTableData()
-              console.error(`Failed to update user ${userID}`);
+              updateTable(updateTableParams[0], updateTableParams[1]);
+              alert(`Failed to update user ${email}`);
             }
           } catch (error) {
-            console.error("User updating error: ", error);
+            updateTable(updateTableParams[0], updateTableParams[1]);
+            alert("User updating error: ", error);
           }
     }
 
@@ -49,7 +45,7 @@ export default function RoleSelector(props) {
                 defaultValue={actualRole}
                 inputProps={{
                     name: 'role',
-                    id: `role-selector-${userID}`,
+                    id: `role-selector-${email}`,
                 }}>
                 <option value={"user"}>user</option>
                 <option value={"admin"}>admin</option>

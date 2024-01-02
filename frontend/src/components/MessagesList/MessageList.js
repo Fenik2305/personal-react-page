@@ -9,25 +9,67 @@ import Paper from '@mui/material/Paper';
 import TablePagination from '@mui/material/TablePagination';
 
 import { convertDateFormat } from '../adminPage/dateFormatFunction.js';
-import { useMessagesContext } from "../../hooks/useMessagesContext";
+import { useAuthContext } from '../../hooks/useAuthContext.js';
 
 function convertData(createdAt, name, email, mssg) {
   return { createdAt, name, email, mssg };
 }
 
-export default function BasicTable() {
-  const { messages } = useMessagesContext();
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+export default function MessageList() {
+  const { user } = useAuthContext();
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+  const [paginatorCount, setPaginatorCount] = React.useState(0);
+  const [paginatorPage, setPaginatorPage] = React.useState(1);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [messages, setMessages] = React.useState([]);
+
+  const handleChangePage = async (event, newPage) => {
+    try {
+      const fetchedPage = await fetchPage(newPage, rowsPerPage);
+      
+      setMessages(fetchedPage["items"]);
+      setPaginatorPage(newPage);
+      setPaginatorCount(fetchedPage["totalItems"]);
+    } catch (error) {
+      alert("Page fetching error:", error);
+    }
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    fetchPage(0, parseInt(event.target.value, 10));
   };
+
+  const fetchPage = async (pageNum, itemsLimit, propFilter = "createdAt", sortOrder = "des") => {
+    try {
+      const params = new URLSearchParams({
+        pageNum: pageNum,
+        itemsLimit: itemsLimit,
+        propFilter: encodeURIComponent(propFilter),
+        sortOrder: encodeURIComponent(sortOrder),
+      });
+  
+      const response = await fetch(`/api/messages/messagePages/${user._id}?${params.toString()}`, {
+        headers: {
+          'Authorization': `Bearer ${user.token}`
+        }
+      });
+  
+      const fetchedPage = await response.json();
+  
+      setMessages(fetchedPage["items"]);
+      setPaginatorPage(fetchedPage["currentPage"]);
+      setPaginatorCount(fetchedPage["totalItems"]);
+  
+      return fetchedPage;
+    } catch (error) {
+      alert("Page fetching error: ", error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchPage(0, rowsPerPage);
+  }, []); 
 
   const rows = messages.map((message) =>
     convertData(
@@ -51,31 +93,30 @@ export default function BasicTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
-                <TableRow
-                  key={row.createdAt}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            {rows.map((row) => (
+              <TableRow
+                key={row.createdAt}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {row.createdAt}
+                </TableCell>
+                <TableCell align="right">{row.name}</TableCell>
+                <TableCell align="right">{row.email}</TableCell>
+                <TableCell
+                  align="justify"
+                  sx={{ maxWidth: '480px', textOverflow: 'ellipsis' }}
                 >
-                  <TableCell component="th" scope="row">
-                    {row.createdAt}
-                  </TableCell>
-                  <TableCell align="right">{row.name}</TableCell>
-                  <TableCell align="right">{row.email}</TableCell>
-                  <TableCell
-                    align="justify"
-                    sx={{ maxWidth: '480px', textOverflow: 'ellipsis' }}
-                  >
-                    {row.mssg}
-                  </TableCell>
-                </TableRow>
-              ))}
+                  {row.mssg}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
         <TablePagination
           component="div"
-          count={rows.length}
-          page={page}
+          count={paginatorCount}
+          page={paginatorPage}
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleChangeRowsPerPage}

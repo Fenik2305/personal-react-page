@@ -24,11 +24,13 @@ import DeleteMessageIcon from './deleteMessageIcon.js';
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../../hooks/useAuthContext';
 
-export default function CollapsibleTable() {
+export default function AdminPage() {
   const { user } = useAuthContext();
   const [rows, setRows] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [paginatorCount, setPaginatorCount] = React.useState(0);
+  const [paginatorPage, setPaginatorPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   function convertData(name, email, lastVisitAt, countMessages, role, editRole, deleteUser, messages) {
     return {
@@ -63,35 +65,50 @@ export default function CollapsibleTable() {
     }).isRequired,
   };
 
-  const fetchMessages = async () => {
+  const fetchPage = async (pageNum, itemsLimit, propFilter = "lastVisitAt", sortOrder = "asc") => {
     try {
-      const response = await fetch(`/api/messages/`, {
+      const params = new URLSearchParams({
+        pageNum: pageNum,
+        itemsLimit: itemsLimit,
+        propFilter: encodeURIComponent(propFilter),
+        sortOrder: encodeURIComponent(sortOrder),
+      });
+  
+      const response = await fetch(`/api/user/userPages/?${params.toString()}`, {
         headers: {
           'Authorization': `Bearer ${user.token}`
         }
       });
+  
+      const fetchedPage = await response.json();
 
-      const messages = await response.json();
+      const users = await fetchedPage["items"];
 
-      return messages;
+      setPaginatorPage(parseInt(fetchedPage["currentPage"]));
+      setPaginatorCount(parseInt(fetchedPage["totalItems"]));
+
+      const newRows = await Promise.all(users.map(async (user) => {
+        return convertData(
+          user["name"],
+          user["email"],
+          user["lastVisitAt"],
+          user["messages"].length,
+          user["role"],
+          <RoleSelector email={user["email"]}
+                        actualRole={user["role"]}
+                        updateTable={fetchPage} 
+                        updateTableParams={[pageNum, itemsLimit]}/>,
+          <DeleteUserIcon email={user["email"]}
+                          updateTable={fetchPage} 
+                          updateTableParams={[pageNum, itemsLimit]}/>,
+          user["messages"]
+        );
+      }));
+
+      setRows(newRows);
+
     } catch (error) {
-      console.log("Messages fetching error:", error);
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch(`/api/user/`, {
-        headers: {
-          'Authorization': `Bearer ${user.token}`
-        }
-      });
-
-      const users = await response.json();
-
-      return users["users"];
-    } catch (error) {
-      console.log("Users fetching error:", error);
+      alert("Page fetching error: ", error);
     }
   };
 
@@ -114,11 +131,11 @@ export default function CollapsibleTable() {
             {row.name}
           </TableCell>
           <TableCell align="right">{row.email}</TableCell>
-          <TableCell align="right">{row.lastVisitAt}</TableCell>
+          <TableCell align="right">{row.lastVisitAt ? convertDateFormat(row.lastVisitAt) : ""}</TableCell>
           <TableCell align="center">{row.countMessages}</TableCell>
           <TableCell align="right">{row.role}</TableCell>
-          <TableCell align="center">{row.editRole}</TableCell>
-          <TableCell align="center">{row.deleteUser}</TableCell>
+          <TableCell align="center">{row.email ? row.editRole : <Typography />}</TableCell>
+          <TableCell align="center">{row.email ? row.deleteUser : <Typography />}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -134,19 +151,22 @@ export default function CollapsibleTable() {
                       <TableCell>E-mail</TableCell>
                       <TableCell>Name</TableCell>
                       <TableCell>Message</TableCell>
-                      <TableCell>Edit</TableCell>
+                      <TableCell>Delete</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {row.messages.map((message) => (
-                      <TableRow key={message._id}>
+                      <TableRow key={message.createdAt}>
                         <TableCell component="th" scope="row">
                           {convertDateFormat(message.createdAt)}
                         </TableCell>
                         <TableCell>{message.email}</TableCell>
                         <TableCell>{message.name}</TableCell>
                         <TableCell>{message.mssg}</TableCell>
-                        <TableCell align='right'>{<DeleteMessageIcon _id={message._id} callback={convertDataToRows}/>}</TableCell>
+                        <TableCell align='right'>{<DeleteMessageIcon messageIdx={message["idx"]} 
+                                                                     updateTable={fetchPage} 
+                                                                     updateTableParams={[paginatorPage, rowsPerPage]}/>}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -159,66 +179,19 @@ export default function CollapsibleTable() {
     );
   }
 
-  const convertDataToRows = async () => {
-    try {
-      const messages = await fetchMessages();
-      const users = await fetchUsers();
-
-      const newRows = [];
-
-      users.forEach(async (user) => {
-        const userMessages = messages.filter(function (message) {
-          return message.author === user._id;
-        });
-
-        newRows.push(
-          convertData(
-            user["name"],
-            user["email"],
-            convertDateFormat(user["lastVisitAt"]),
-            userMessages.length,
-            user["role"],
-            <RoleSelector userID={user._id} actualRole={user["role"]} callback={convertDataToRows}/>,
-            <DeleteUserIcon _id={user._id} messages={userMessages} callback={convertDataToRows}/>,
-            userMessages
-          )
-        );
-      });
-
-      const unregMessages = messages.filter(function (message) {
-        return message.author === "unregistred";
-      });
-      newRows.push(
-        convertData(
-          "unregistred\nusers",
-          "",
-          "",
-          unregMessages.length,
-          "",
-          <Typography />,
-          <Typography />,
-          unregMessages
-        )
-      );
-
-      setRows(newRows);
-    } catch (error) {
-      console.log("Data fetching error:", error);
-    }
-  };
-
-
   const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+    setPaginatorPage(newPage);
+    fetchPage(newPage, rowsPerPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setPaginatorPage(0);
+    fetchPage(0, parseInt(event.target.value, 10));
   };
 
   useEffect(() => {
-    convertDataToRows();
+    fetchPage(0, 5);
   }, []);
 
   return (
@@ -239,7 +212,7 @@ export default function CollapsibleTable() {
                 </TableHead>
                 <TableBody>
 
-                {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                {rows.map((row) => (
                   <Row key={row.email} row={row} />
                 ))}
                 
@@ -247,8 +220,8 @@ export default function CollapsibleTable() {
             </Table>
             <TablePagination
               component="div"
-              count={rows.length}
-              page={page}
+              count={paginatorCount}
+              page={paginatorPage}
               onPageChange={handleChangePage}
               rowsPerPage={rowsPerPage}
               onRowsPerPageChange={handleChangeRowsPerPage}

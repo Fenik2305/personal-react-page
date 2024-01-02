@@ -1,29 +1,21 @@
 const express = require('express');
+
 const AuthController = require('../controllers/authController.js');
 
-//controller
 const { loginUser,
         signupUser,
-        updateUser,
-        deleteUser, 
-        getUsers } = require('../controllers/userController.js')
+        getPaginatedUsersWithMessages, 
+        updateUserRoleByEmail,
+        disableUserByEmail} = require('../controllers/userController.js')
 
 const router = express.Router()
 
-//get all users
-router.get('/', AuthController.roleAuthorization(['user', 'admin']), getUsers)
+router.get('/userPages/', AuthController.roleAuthorization(['admin']), getPaginatedUsersWithMessages)
 
-//login user
 router.post('/login', loginUser)
-
-//signup user
 router.post('/signup', signupUser)
 
-//update user
-router.patch('/:id', AuthController.roleAuthorization(['admin']), updateUser)
-
-//delete user
-router.delete('/:id', AuthController.roleAuthorization(['admin']), deleteUser)
-
+router.patch('/updateRoleByEmail/:email', AuthController.roleAuthorization(['admin']), updateUserRoleByEmail)
+router.patch('/disableByEmail/:email', AuthController.roleAuthorization(['admin']), disableUserByEmail)
 
 module.exports = router

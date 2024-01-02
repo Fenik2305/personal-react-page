@@ -18,7 +18,7 @@ import ContactsStyles from './components/ContactsPage/Contacts.css';
 import MessagesListStyles from './components/MessagesList/MessageList.css';
 import HeaderStyles from './components/Header/Header.css';
 import FooterStyles from './components/Footer/Footer.css';
-import AutPageStyles from './components/AuthPage/AuthPage.css';
+import AuthPageStyles from './components/AuthPage/AuthPage.css';
 import adminPageStyles from './components/adminPage/adminPage.css';
 
 function App() {
