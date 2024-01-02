@@ -14,7 +14,7 @@ export default function RoleSelector(props) {
         const newUserRole = document.getElementById(`role-selector-${email}`).value;
         
         try {
-            const response = await fetch(`/api/user/updateByEmail/${email}`, {
+            const response = await fetch(`/api/user/updateRoleByEmail/${email}`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${user.token}`,

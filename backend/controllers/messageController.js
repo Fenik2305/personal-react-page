@@ -1,6 +1,18 @@
 const Message = require("../models/messageModel.js");
-const mongoose = require("mongoose");
+const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
+
+const getUnregMessages = async () => {
+    return await Message.find({ author: 'unregistred' })
+                        .sort({ createdAt: -1 })
+                        .select('-_id -__v -author');
+};
+
+const getUserMessages = async (userIDs) => {
+    return await Message.find({ author: { $in: userIDs } })
+                        .sort({ createdAt: -1 })
+                        .select('-_id -__v');
+};
 
 // GET all messages
 const getMessages = async (req, res) => {
@@ -13,7 +25,19 @@ const getMessages = async (req, res) => {
 const getMessagesPage = async (req, res) => {
     const { userID } = req.params;
 
-    const { pageNum, itemsLimit, propFilter, sortOrder } = req.query;
+    const token = req.headers.authorization.split(' ')[1]
+
+    const {_id: _id, role: userRole} = jwt.verify(token, process.env.SECRET)
+
+    if (userID != _id && userRole == "user") {
+        return res.status(403).json({message: "Access to messages of other users is not allowed."})
+    }
+
+    const pageNum = req.query.pageNum;
+    const itemsLimit = req.query.itemsLimit;
+    const propFilter = decodeURIComponent(req.query.propFilter);
+    const sortOrder = decodeURIComponent(req.query.sortOrder);
+    
     const sort = sortOrder === "des" ? -1 : 1;
 
     const totalMessages = await Message.countDocuments({ author: userID })
@@ -41,32 +65,6 @@ const getMessagesPage = async (req, res) => {
     res.status(200).json(page);
 }
 
-// GET user messages
-const getUserMessages = async (req, res) => {
-    const { userID } = req.params
-
-    const messages = await Message.find({ author: userID }).sort({createdAt: -1})
-
-    res.status(200).json(messages)
-};
-
-// GET a message
-const getMessage = async (req, res) => {
-    const { id } = req.params
-    
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: "No such message!"})
-    }
-
-    const message = await Message.findById(id)
-
-    if (!message) {
-        return res.status(404).json({error: "No such message!"})
-    }
-
-    res.status(200).json(message)
-}
-
 // POST a new message
 const createMessage = async (req, res) => {
     const {name, email, mssg, author} = req.body
@@ -76,6 +74,17 @@ const createMessage = async (req, res) => {
     try {
         const message = await Message.create({ idx, name, email, mssg, author })
         res.status(200).json(message)
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+const countUserMessages = async (req, res) => {
+    const { userID } = req.params;
+
+    try {
+        const totalMessages = await Message.countDocuments({ author: userID })
+        res.status(200).json(totalMessages)
     } catch (error) {
         res.status(400).json({error: error.message})
     }
@@ -103,9 +112,11 @@ const deleteMessages = async (req, res) => {
 module.exports = {
     getMessages,
     getMessagesPage,
-    getUserMessages,
-    getMessage,
     createMessage,
     deleteMessage,
-    deleteMessages
+    deleteMessages,
+    countUserMessages,
+
+    getUnregMessages,
+    getUserMessages
   }

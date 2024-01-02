@@ -8,7 +8,7 @@ export default function DeleteUserIcon( props ) {
 
     const deleteUser = async () => {
       try {
-        const response = await fetch(`/api/user/deleteByEmail/${email}`, {
+        const response = await fetch(`/api/user/disableByEmail/${email}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${user.token}`
@@ -19,11 +19,11 @@ export default function DeleteUserIcon( props ) {
           updateTable(updateTableParams[0], updateTableParams[1]);
         } else {
           updateTable(updateTableParams[0], updateTableParams[1]);
-          alert(`Failed to delete user with email ${email}`);
+          alert(`Failed to disable user with email ${email}`);
         }
       } catch (error) {
         updateTable(updateTableParams[0], updateTableParams[1]);
-        alert("User deleting error: ", error);
+        alert("User disabling error: ", error);
       }
     }
 

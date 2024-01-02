@@ -68,8 +68,8 @@ export default function AdminPage() {
   const fetchPage = async (pageNum, itemsLimit, propFilter = "lastVisitAt", sortOrder = "asc") => {
     try {
       const params = new URLSearchParams({
-        pageNum: encodeURIComponent(pageNum),
-        itemsLimit: encodeURIComponent(itemsLimit),
+        pageNum: pageNum,
+        itemsLimit: itemsLimit,
         propFilter: encodeURIComponent(propFilter),
         sortOrder: encodeURIComponent(sortOrder),
       });

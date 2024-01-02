@@ -1,8 +1,9 @@
 const User = require('../models/userModel.js');
-const Message = require('../models/messageModel.js');
-const mongoose = require('mongoose');
-
 const jwt = require('jsonwebtoken');
+const {
+    getUnregMessages,
+    getUserMessages,
+} = require("../controllers/messageController.js")
 
 const createToken = (_id, role) => {
     return jwt.sign({_id: _id, role: role}, process.env.SECRET, {expiresIn: "12h"})
@@ -51,51 +52,26 @@ const signupUser = async (req, res) => {
     }
 }
 
-const updateUser = async (req, res) => {
-    try {
-        const {id} = req.params;
-
-        const user = await User.findOneAndUpdate({ _id: id }, {
-            ...req.body
-        });
-
-        res.status(200).json(user)
-    } catch (error) {
-        res.status(400).json({error: error.message})
-    }
-}
-
-const updateUserByEmail = async (req, res) => {
+const updateUserRoleByEmail = async (req, res) => {
     try {
         const { email } = req.params
 
-        const user = await User.findOneAndUpdate({ email: email }, {
-            ...req.body
-        });
+        const { role } = req.body;
 
-        res.status(200).json(user)
+        if (role) {
+            const user = await User.findOneAndUpdate({ email: email },
+                { $set: { role: role } },
+                { new: true });
+    
+            res.status(200).json(user)
+        }
+
     } catch (error) {
         res.status(400).json({error: error.message})
     }
 }
 
-const deleteUser = async (req, res) => {
-    const { id } = req.params
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: "No such user!"})
-    }
-
-    const user = await User.findOneAndDelete({_id: id})
-
-    if (!user) {
-        return res.status(404).json({error: "No such user!"})
-    }
-
-    res.status(200).json(user)
-}
-
-const deleteUserByEmail = async (req, res) => {
+const disableUserByEmail = async (req, res) => {
     const { email } = req.params
 
     const user = await User.findOneAndUpdate({ email: email },
@@ -112,16 +88,20 @@ const deleteUserByEmail = async (req, res) => {
     res.status(200).json(user)
 }
 
-const getUsers = async (req, res) => {
-    try {
-        const users = await User.find({}).sort({createdAt: -1})
-
-        res.status(200).json({users})
-    } catch (error) {
-        res.status(400).json({error: error.message})
-    }
-}
-
+/**
+ * Returns a page object with paginator parameters.
+ *
+ * @param {Object} req - For the function to work, the pageNum and itemsLimit fields must be stored in 
+ * res.query to set requested page number and the number of requested elements. 
+ * You can also specify the propFilter and sortOrder fields if you want to sort the result 
+ * by the propFilter field in sortOrder order (desc or asc). Otherwise, the order will
+ *  be sorted by the date of your last login to your account in descending order.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} Returns a page object containing parameters necessary for the proper functioning of a paginator, 
+ * including the total number of items «totalItems», the current page number «currentPage», 
+ * the overall number of pages «totalPages». The object also holds the field «items», 
+ * storing an array of user objects with message fields, where messages sent by each user are stored.
+ */
 const getPaginatedUsersWithMessages = async (req, res) => {
     const { pageNum, itemsLimit, propFilter, sortOrder } = req.query;
     const sort = sortOrder === "des" ? -1 : 1;
@@ -140,12 +120,6 @@ const getPaginatedUsersWithMessages = async (req, res) => {
             .limit(itemsLimit)
             .select('_id name email role lastVisitAt');
 
-        const getUserMessages = async (userIDs) => {
-            return await Message.find({ author: { $in: userIDs } })
-                                .sort({ createdAt: -1 })
-                                .select('-_id -__v');
-        };
-
         const userIDs = usersForPage.map(user => user._id);
         const messages = await getUserMessages(userIDs);
 
@@ -162,12 +136,6 @@ const getPaginatedUsersWithMessages = async (req, res) => {
                 messages: userMessages
             };
         });
-
-        const getUnregMessages = async () => {
-            return await Message.find({ author: 'unregistred' })
-                                .sort({ createdAt: -1 })
-                                .select('-_id -__v -author');
-        };
 
         const unregMessages = await getUnregMessages();
 
@@ -196,4 +164,4 @@ const getPaginatedUsersWithMessages = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, signupUser, updateUser, updateUserByEmail, deleteUser, deleteUserByEmail, getUsers, getPaginatedUsersWithMessages }
+module.exports = { loginUser, signupUser, updateUserRoleByEmail, disableUserByEmail, getPaginatedUsersWithMessages }

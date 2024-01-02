@@ -4,15 +4,17 @@ const AuthController = require('../controllers/authController.js');
 const {
     getMessages,
     getMessagesPage,
-    getMessage,
     createMessage,
-    deleteMessage
+    deleteMessage,
+    countUserMessages
 } = require("../controllers/messageController.js")
 
 const router = express.Router()
 
 // POST a new message
 router.post('/', createMessage);
+
+router.get('/count/:userID', AuthController.roleAuthorization(['user', 'admin']), countUserMessages)
 
 // GET all messages
 router.get('/', AuthController.roleAuthorization(["admin"]), getMessages);
@@ -22,10 +24,5 @@ router.delete('/:idx', AuthController.roleAuthorization(["admin"]), deleteMessag
 
 // GET messages page
 router.get('/messagePages/:userID', AuthController.roleAuthorization(["user", "admin"]), getMessagesPage);
-
-// GET a single message
-router.get('/:id', AuthController.roleAuthorization(["user", "admin"]), getMessage);
-
-
 
 module.exports = router

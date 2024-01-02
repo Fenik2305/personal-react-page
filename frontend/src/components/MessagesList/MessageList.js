@@ -43,8 +43,8 @@ export default function MessageList() {
   const fetchPage = async (pageNum, itemsLimit, propFilter = "createdAt", sortOrder = "des") => {
     try {
       const params = new URLSearchParams({
-        pageNum: encodeURIComponent(pageNum),
-        itemsLimit: encodeURIComponent(itemsLimit),
+        pageNum: pageNum,
+        itemsLimit: itemsLimit,
         propFilter: encodeURIComponent(propFilter),
         sortOrder: encodeURIComponent(sortOrder),
       });
